@@ -1,0 +1,39 @@
+# The library itself is the workspace root; `pages` is the documentation site.
+packages:
+  - pages
+
+# Native postinstall scripts, allowed explicitly.
+allowBuilds:
+  esbuild: true # Astro's bundler
+  sharp: true # Starlight image optimisation
+  workerd: true # the Cloudflare runtime, for `wrangler dev`
+
+# Every version lives here, once. Workspace packages write `catalog:` instead of
+# a range, so the library and the docs site can never drift onto two different
+# TypeScript or Vitest versions.
+catalog:
+  "@arethetypeswrong/cli": ^0.18.5
+  "@eslint/js": ^10.0.1
+  eslint: ^10.9.0
+  eslint-config-prettier: ^10.1.8
+  eslint-plugin-astro: ^3.1.0
+  globals: ^17.11.0
+  prettier: ^3.9.6
+  prettier-plugin-astro: ^0.14.1
+  typescript-eslint: ^8.67.0
+  "@types/node": ^22.20.1
+  "@vitest/coverage-v8": ^4.1.11
+  tsdown: ^0.22.14
+  typescript: ^6.0.3
+  vitest: ^4.1.11
+
+  # Documentation site
+  "@astrojs/starlight": ^0.41.7
+  astro: ^7.2.4
+  sharp: ^0.34.4
+  wrangler: ^4.125.0
+
+  # Generated API reference
+  starlight-typedoc: ^0.23.1
+  typedoc: ^0.28.20
+  typedoc-plugin-markdown: ^4.12.0

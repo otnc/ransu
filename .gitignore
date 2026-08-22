@@ -7,3 +7,9 @@ coverage/
 .env
 .env.*
 !.env.example
+pages/dist/
+pages/.astro/
+pages/.wrangler/
+
+# Generated from TSDoc by starlight-typedoc during the docs build.
+pages/src/content/docs/api/
