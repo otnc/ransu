@@ -1,0 +1,23 @@
+{
+  "name": "ransu-docs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "astro build && wrangler deploy",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "catalog:",
+    "astro": "catalog:",
+    "sharp": "catalog:"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:",
+    "starlight-typedoc": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:"
+  }
+}
