@@ -1,0 +1,15 @@
+dist
+coverage
+pnpm-lock.yaml
+package-lock.json
+
+# Generated from TSDoc comments by `pnpm docs:api`.
+pages/src/content/docs/api
+
+pages/dist
+pages/.astro
+pages/.wrangler
+
+# Markdown tables: Prettier aligns by code point, so CJK and emoji columns
+# come out crooked. Content is what matters here, not source alignment.
+*.md
