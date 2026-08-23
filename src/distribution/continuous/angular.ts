@@ -15,7 +15,14 @@ export interface VonMisesOptions extends DistributionOptions {
   kappa?: number;
 }
 
-/** Best & Fisher's method. Returns an angle in `(-pi, pi]`. */
+/**
+ * Von Mises: an angle in `(-pi, pi]`, the circular analogue of a normal. A larger `kappa` concentrates draws near `mu`.
+ *
+ * @example
+ * ```ts
+ * vonMises({ mu: 0, kappa: 10 }).sample(); // 0.0782...
+ * ```
+ */
 export function vonMises(options: VonMisesOptions = {}): NumberSampler {
   const { mu = 0, kappa = 1 } = options;
   assertFinite(mu, "mu");

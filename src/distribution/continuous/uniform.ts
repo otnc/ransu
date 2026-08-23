@@ -11,7 +11,16 @@ export interface UniformOptions extends DistributionOptions {
   max?: number;
 }
 
-/** Uniform on `[min, max)`. */
+/**
+ * Uniform over `[min, max)`.
+ *
+ * @example
+ * ```ts
+ * const u = uniform({ min: -1, max: 1 });
+ * u.sample(); // 0.4142...
+ * u.mean;     // 0
+ * ```
+ */
 export function uniform(options: UniformOptions = {}): NumberSampler {
   const { min = 0, max = 1 } = options;
   assertFinite(min, "min");

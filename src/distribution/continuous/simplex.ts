@@ -12,7 +12,15 @@ export interface DirichletOptions extends DistributionOptions {
   alpha: readonly number[];
 }
 
-/** A point on the simplex: non-negative components summing to 1. */
+/**
+ * Dirichlet: a point on the simplex, so the values are in `(0, 1)` and sum to 1. The usual prior over a categorical distribution.
+ *
+ * @example
+ * ```ts
+ * const d = dirichlet({ alpha: [1, 1, 1] });
+ * d.sample(); // [ 0.24, 0.51, 0.25 ]
+ * ```
+ */
 export function dirichlet(options: DirichletOptions): Sampler<number[]> {
   const { alpha } = options;
   if (alpha.length === 0) {

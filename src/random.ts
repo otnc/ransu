@@ -61,8 +61,27 @@ function isEngine(value: unknown): value is Engine {
 /**
  * An independent stream of randomness: `new Random(42).integer(1, 6)`.
  *
- * Method names match the `ransu` namespace exactly. Libraries should own a
- * `Random` rather than call the global, which an application may re-seed.
+ * Method names match the `ransu` namespace exactly, for the numbers,
+ * collections and strings it covers. Libraries should own a `Random` rather
+ * than call the global, which an application may re-seed.
+ *
+ * The modules that take an `{ engine }` option — `uuid`, the distributions,
+ * `dice`, `geometry`, `color` — reach the same stream through `rng.engine`.
+ *
+ * @example
+ * ```ts
+ * const rng = new Random(42);
+ * rng.integer(1, 6);         // 3
+ * rng.pick(["a", "b", "c"]); // "c"
+ * rng.shuffle([1, 2, 3]);    // [ 3, 1, 2 ]
+ *
+ * // The same seed always replays the same stream.
+ * new Random(42).integer(1, 6); // 3 again
+ *
+ * // Any engine, by factory or by instance.
+ * new Random(42, { engine: engines.pcg32 });
+ * new Random(engines.chacha20(42));
+ * ```
  */
 export class Random {
   #engine: Engine;
@@ -88,7 +107,15 @@ export class Random {
     this.#src = createSource(this.#engine);
   }
 
-  /** The underlying engine. Hand this to `{ engine }` options elsewhere. */
+  /**
+   * The underlying engine. Hand this to `{ engine }` options elsewhere.
+   *
+   * @example
+   * ```ts
+   * const rng = new Random(42);
+   * uuid.v4({ engine: rng.engine }); // a UUID from this stream
+   * ```
+   */
   get engine(): Engine {
     return this.#src.engine;
   }
@@ -96,6 +123,12 @@ export class Random {
   /**
    * Restart from new seed material. A seedable engine restarts in place; an
    * unseedable one is replaced by the default deterministic engine.
+   *
+   * @example
+   * ```ts
+   * const rng = new Random();
+   * rng.seed(42).integer(1, 6); // 3, and chainable
+   * ```
    */
   seed(seed: Seed): this {
     const engine = this.#src.engine;
@@ -111,6 +144,16 @@ export class Random {
   }
 
   /** An independent copy, positioned exactly where this one is. */
+  /**
+   * An independent copy positioned exactly where this one is.
+   *
+   * @example
+   * ```ts
+   * const rng = new Random(42);
+   * const copy = rng.clone();
+   * rng.random() === copy.random(); // true, then they diverge
+   * ```
+   */
   clone(): Random {
     const engine = this.#src.engine;
     if (!engine.clone) {
@@ -123,6 +166,15 @@ export class Random {
   }
 
   /** `n` independent generators, for workers or parallel simulations. */
+  /**
+   * `n` streams that will not overlap, for parallel work.
+   *
+   * @example
+   * ```ts
+   * const [a, b, c] = new Random(42, { engine: engines.pcg32 }).split(3);
+   * a.random(); // each worker draws from its own stream
+   * ```
+   */
   split(n: number): Random[] {
     const engine = this.#src.engine;
     if (!engine.split) {
@@ -134,7 +186,18 @@ export class Random {
     return engine.split(n).map((child) => new Random(child));
   }
 
-  /** A JSON-serialisable snapshot. Restore it with {@link setState}. */
+  /**
+   * A JSON-serialisable snapshot. Restore it with {@link Random.setState}.
+   *
+   * @example
+   * ```ts
+   * const rng = new Random(42);
+   * const saved = rng.getState();
+   * const first = rng.random();
+   * rng.setState(saved);
+   * rng.random() === first; // true
+   * ```
+   */
   getState(): EngineState {
     const engine = this.#src.engine;
     if (!engine.getState) {
@@ -146,6 +209,15 @@ export class Random {
     return engine.getState();
   }
 
+  /**
+   * Rewind or fast-forward this stream to a saved snapshot.
+   *
+   * @example
+   * ```ts
+   * const rng = new Random(42);
+   * rng.setState(rng.getState()); // chainable
+   * ```
+   */
   setState(state: EngineState): this {
     const engine = this.#src.engine;
     if (!engine.setState) {

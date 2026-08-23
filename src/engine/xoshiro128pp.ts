@@ -12,6 +12,17 @@ function rotl(x: number, k: number): number {
   return ((x << k) | (x >>> (32 - k))) >>> 0;
 }
 
+/**
+ * The xoshiro128++ engine. Build one with {@link xoshiro128pp}.
+ *
+ * Exposed for `instanceof` and for subclassing; the factory is the way to
+ * make one.
+ *
+ * @example
+ * ```ts
+ * xoshiro128pp(42) instanceof Xoshiro128pp; // true
+ * ```
+ */
 export class Xoshiro128pp extends PrngEngine {
   readonly algorithm = "xoshiro128++";
 
@@ -84,6 +95,21 @@ export class Xoshiro128pp extends PrngEngine {
   }
 }
 
+/**
+ * xoshiro128++ — 128 bits of state, the default engine.
+ *
+ * Fast, small, and passes BigCrush. Its period of 2^128-1 is far more than
+ * any single program will draw, but it is not cryptographic: a few outputs
+ * are enough to recover the state and predict the rest.
+ *
+ * @example
+ * ```ts
+ * const source = xoshiro128pp(42);
+ * source.nextUint32(); // 167929222
+ *
+ * new Random(source).integer(1, 6); // 3
+ * ```
+ */
 export function xoshiro128pp(seed?: Seed): Xoshiro128pp {
   return new Xoshiro128pp(ensureNonZero(initialWords(seed, 4)));
 }

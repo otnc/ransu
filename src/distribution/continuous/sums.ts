@@ -10,7 +10,14 @@ export interface IrwinHallOptions extends DistributionOptions {
   n: number;
 }
 
-/** The sum of `n` independent uniforms on `[0, 1)`. */
+/**
+ * Irwin-Hall: the sum of `n` uniforms. With `n` of 12 it is a cheap normal approximation.
+ *
+ * @example
+ * ```ts
+ * irwinHall({ n: 12 }).sample(); // 6.1284...
+ * ```
+ */
 export function irwinHall(options: IrwinHallOptions): NumberSampler {
   const { n } = options;
   assertPositive(n, "n");
@@ -26,7 +33,14 @@ export function irwinHall(options: IrwinHallOptions): NumberSampler {
   );
 }
 
-/** The mean of `n` independent uniforms on `[0, 1)`. */
+/**
+ * Bates: the mean of `n` uniforms, so Irwin-Hall divided by `n`.
+ *
+ * @example
+ * ```ts
+ * bates({ n: 10 }).sample(); // 0.5127...
+ * ```
+ */
 export function bates(options: IrwinHallOptions): NumberSampler {
   const { n } = options;
   assertPositive(n, "n");

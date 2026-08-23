@@ -12,6 +12,14 @@ const MULT_LO = 0x4c957f2d;
 const MULT = 0x5851f42d4c957f2dn;
 const MASK64 = (1n << 64n) - 1n;
 
+/**
+ * The PCG32 engine. Build one with {@link pcg32}.
+ *
+ * @example
+ * ```ts
+ * pcg32(42) instanceof Pcg32; // true
+ * ```
+ */
 export class Pcg32 extends PrngEngine {
   readonly algorithm = "pcg32";
 
@@ -100,6 +108,18 @@ function seedState(words: Uint32Array): Uint32Array {
   );
 }
 
+/**
+ * PCG32 — a 64-bit LCG whose output is permuted before it is returned.
+ *
+ * Statistically excellent for its size, and it supports multiple independent
+ * streams from one seed.
+ *
+ * @example
+ * ```ts
+ * const source = pcg32(42);
+ * source.nextUint32(); // 2722782280
+ * ```
+ */
 export function pcg32(seed?: Seed): Pcg32 {
   return new Pcg32(seedState(initialWords(seed, 4)));
 }

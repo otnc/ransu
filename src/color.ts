@@ -53,7 +53,18 @@ function alphaOf(options: ColorOptions): number {
   return draw("alpha", options.alpha, [0, 1]);
 }
 
-/** `[hue, saturation, lightness, alpha]`, with hue in degrees. */
+/**
+ * `[hue, saturation, lightness, alpha]`, with hue in degrees.
+ *
+ * Alpha is `1` unless you ask for it, so the tuple is always four long.
+ *
+ * @example
+ * ```ts
+ * hsl();                              // [ 214, 0.62, 0.55, 1 ]
+ * hsl({ hue: [200, 240] });           // blues only
+ * hsl({ saturation: 0.8, lightness: [0.4, 0.6] });
+ * ```
+ */
 export function hsl(
   options: ColorOptions = {}
 ): [number, number, number, number] {
@@ -92,7 +103,15 @@ function toRgb(h: number, s: number, l: number): [number, number, number] {
   ];
 }
 
-/** `[red, green, blue, alpha]`, channels `0` to `255` and alpha `0` to `1`. */
+/**
+ * `[red, green, blue, alpha]`, channels `0` to `255` and alpha `0` to `1`.
+ *
+ * @example
+ * ```ts
+ * rgb();                        // [ 62, 129, 214, 1 ]
+ * rgb({ alpha: [0.2, 0.8] });   // [ 200, 41, 96, 0.57 ]
+ * ```
+ */
 export function rgb(
   options: ColorOptions = {}
 ): [number, number, number, number] {
@@ -110,6 +129,20 @@ const round2 = (value: number) => Math.round(value * 100) / 100;
  *
  * Hex by default. Opacity only appears when `alpha` was asked for, so the
  * common case stays `#rrggbb`.
+ *
+ * @example
+ * ```ts
+ * color();                          // "#3e81d6"
+ * color({ format: "rgb" });         // "rgb(62 129 214)"
+ * color({ format: "hsl" });         // "hsl(214 62% 55%)"
+ *
+ * color({ alpha: true });           // "#3e81d64f"  a random alpha
+ * color({ alpha: 0.5 });            // "#3e81d680"  a fixed one
+ * color({ format: "rgb", alpha: 0.4 }); // "rgb(62 129 214 / 0.4)"
+ *
+ * // Constrain any channel to a value or an inclusive range.
+ * color({ hue: [200, 240], saturation: 0.7, lightness: [0.3, 0.5] });
+ * ```
  */
 export function color(options: ColorOptions = {}): string {
   const withAlpha = options.alpha !== undefined;

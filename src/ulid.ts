@@ -106,12 +106,42 @@ function timestamp(value: string): number {
   return out;
 }
 
-/** `ulid()` makes one; `ulid.timestamp()` reads the time back out. */
+/**
+ * `ulid()` makes one; `ulid.timestamp()` reads the time back out.
+ *
+ * Lexicographic order matches time order, which is what makes a ULID sort
+ * correctly as a plain string in a database index.
+ *
+ * @example
+ * ```ts
+ * const id = ulid(); // "01K39XQZP4W8YHN2VBTKD7A3RM"
+ * ulid.timestamp(id); // 1756890764019, the millisecond it was made
+ *
+ * // Two made in the same millisecond still sort in creation order.
+ * ulid() < ulid(); // true
+ * ```
+ */
 export interface UlidApi {
   (options?: UlidOptions): string;
   timestamp: typeof timestamp;
 }
 
+/**
+ * A ULID: 26 characters of Crockford base32, time-ordered.
+ *
+ * 48 bits of millisecond timestamp then 80 bits of randomness, encoded so
+ * that lexicographic order is time order. Shorter than a UUID and
+ * case-insensitive, with no dashes to strip.
+ *
+ * @example
+ * ```ts
+ * const id = ulid(); // "01K39XQZP4W8YHN2VBTKD7A3RM"
+ * ulid.timestamp(id); // 1756890764019
+ *
+ * // Sorts in creation order as a plain string.
+ * ulid() < ulid(); // true
+ * ```
+ */
 export const ulid: UlidApi = /* @__PURE__ */ Object.assign(generate, {
   timestamp,
 });

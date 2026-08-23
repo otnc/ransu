@@ -11,6 +11,14 @@ const MATRIX_A = 0x9908b0df;
 const UPPER_MASK = 0x80000000;
 const LOWER_MASK = 0x7fffffff;
 
+/**
+ * The Mersenne Twister engine. Build one with {@link mt19937}.
+ *
+ * @example
+ * ```ts
+ * mt19937(42) instanceof Mt19937; // true
+ * ```
+ */
 export class Mt19937 extends PrngEngine {
   readonly algorithm = "mt19937";
 
@@ -87,6 +95,22 @@ function seedByArray(key: ArrayLike<number>): Uint32Array {
   return mt;
 }
 
+/**
+ * Mersenne Twister — the engine behind Python's `random` and many others.
+ *
+ * Here for reproducing a stream produced elsewhere. It is slower and much
+ * larger than the rest, and fails some of the TestU01 battery; there is no
+ * reason to choose it for new work.
+ *
+ * @example
+ * ```ts
+ * const source = mt19937(12345);
+ * source.nextUint32(); // 376690009
+ *
+ * // Seeding by array, as init_by_array does.
+ * mt19937([0x123, 0x234, 0x345, 0x456]);
+ * ```
+ */
 export function mt19937(seed?: Seed): Mt19937 {
   return new Mt19937(seedByArray(initialWords(seed, 8)));
 }

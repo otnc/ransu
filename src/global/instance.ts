@@ -22,12 +22,29 @@ export function globalSource(): Source {
   return source;
 }
 
-/** The engine every top-level function currently draws from. */
+/**
+ * The engine every top-level function currently draws from.
+ *
+ * @example
+ * ```ts
+ * engine().algorithm; // "Math.random" until you call seed()
+ * ```
+ */
 export function engine(): Engine {
   return source.engine;
 }
 
-/** Make every top-level function deterministic from here on. */
+/**
+ * Make every top-level function deterministic from here on.
+ *
+ * @example
+ * ```ts
+ * seed(42);
+ * integer(1, 6); // 3
+ * seed(42);
+ * integer(1, 6); // 3 again
+ * ```
+ */
 export function seed(value: Seed): void {
   const active = source.engine;
   if (active.seedable && active.reseed) {
@@ -37,7 +54,18 @@ export function seed(value: Seed): void {
   source.adopt(xoshiro128pp(value));
 }
 
-/** A JSON-serialisable snapshot of the global stream. */
+/**
+ * A JSON-serialisable snapshot of the global stream.
+ *
+ * @example
+ * ```ts
+ * seed(1);
+ * const saved = getState();
+ * const first = random();
+ * setState(saved);
+ * random() === first; // true
+ * ```
+ */
 export function getState(): EngineState {
   const active = source.engine;
   if (!active.getState) {
@@ -49,6 +77,15 @@ export function getState(): EngineState {
   return active.getState();
 }
 
+/**
+ * Rewind or fast-forward the global stream to a saved snapshot.
+ *
+ * @example
+ * ```ts
+ * seed(1);
+ * setState(getState()); // a no-op, but this is the shape
+ * ```
+ */
 export function setState(state: EngineState): void {
   const active = source.engine;
   if (!active.setState) {

@@ -17,7 +17,15 @@ export interface HypergeometricOptions extends DistributionOptions {
   draws: number;
 }
 
-/** Sequential urn sampling: exact, and `O(draws)`. */
+/**
+ * Hypergeometric: successes when drawing without replacement from a finite pool.
+ *
+ * @example
+ * ```ts
+ * // Ten cards from a deck of 50 that holds 5 aces.
+ * hypergeometric({ population: 50, successes: 5, draws: 10 }).sample(); // 1
+ * ```
+ */
 export function hypergeometric(options: HypergeometricOptions): NumberSampler {
   const { population, successes, draws } = options;
   assertCount(population, "population");
@@ -63,7 +71,14 @@ export interface ZipfOptions extends DistributionOptions {
   n: number;
 }
 
-/** Zipf over a finite number of ranks, by binary search on the exact CDF. */
+/**
+ * Zipf: a rank in `1..n`, following the power law behind word frequency.
+ *
+ * @example
+ * ```ts
+ * zipf({ s: 1.2, n: 1000 }).sample(); // 3
+ * ```
+ */
 export function zipf(options: ZipfOptions): NumberSampler {
   const { s = 1, n } = options;
   assertFinite(s, "s");

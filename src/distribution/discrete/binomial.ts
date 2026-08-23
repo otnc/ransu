@@ -67,7 +67,16 @@ export interface BinomialOptions extends DistributionOptions {
   p: number;
 }
 
-/** The number of successes in `n` independent trials. */
+/**
+ * Binomial: successes in `n` independent trials, by Hormann's BTRS.
+ *
+ * @example
+ * ```ts
+ * const flips = binomial({ n: 10, p: 0.5 });
+ * flips.sample(); // 6
+ * flips.mean;     // 5
+ * ```
+ */
 export function binomial(options: BinomialOptions): NumberSampler {
   const { n, p } = options;
   assertCount(n, "n");

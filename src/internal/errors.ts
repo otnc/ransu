@@ -11,7 +11,24 @@ export type RansuErrorCode =
   | "STATE_MISMATCH"
   | "UNSEEDABLE_ENGINE";
 
-/** The only error type ransu throws. `code` is for programs, `message` for people. */
+/**
+ * Every error ransu throws, carrying a stable `code` to branch on.
+ *
+ * The message is for people and may change; the code is the contract.
+ *
+ * @example
+ * ```ts
+ * import { RansuError, pick } from "ransu";
+ *
+ * try {
+ *   pick([]);
+ * } catch (error) {
+ *   if (error instanceof RansuError) {
+ *     error.code; // "EMPTY_COLLECTION"
+ *   }
+ * }
+ * ```
+ */
 export class RansuError extends Error {
   readonly code: RansuErrorCode;
 

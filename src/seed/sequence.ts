@@ -86,8 +86,27 @@ export function toEntropy(seed: Seed): Uint32Array {
 }
 
 /**
- * Turns seed material into engine state. Feeding a raw seed straight into a
- * PRNG is the classic way to get correlated streams from nearby seeds.
+ * Turns one seed into as many independent, well-mixed seeds as you need.
+ *
+ * Seeding parallel workers with 1, 2, 3 gives streams that can correlate,
+ * because nearby seeds are nearby states. Spawning from a sequence puts each
+ * worker somewhere unrelated, and the whole tree still replays from the one
+ * root seed.
+ *
+ * @example
+ * ```ts
+ * import { Random, SeedSequence } from "ransu";
+ *
+ * const root = SeedSequence.from(42);
+ * const workers = root
+ *   .spawn(4)
+ *   .map((child) => new Random(child.generateState(4)));
+ *
+ * workers[0].random(); // independent of workers[1]
+ *
+ * // The same root always produces the same children.
+ * SeedSequence.from(42).spawn(4);
+ * ```
  */
 export class SeedSequence {
   readonly entropy: Uint32Array;

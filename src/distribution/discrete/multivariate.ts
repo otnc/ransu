@@ -14,7 +14,14 @@ export interface MultinomialOptions extends DistributionOptions {
   weights: ArrayLike<number>;
 }
 
-/** Counts per category, by conditional binomials. Always sums to `n`. */
+/**
+ * Multinomial: counts per category, summing to `n`.
+ *
+ * @example
+ * ```ts
+ * multinomial({ n: 100, weights: [1, 3, 6] }).sample(); // [ 9, 31, 60 ]
+ * ```
+ */
 export function multinomial(options: MultinomialOptions): Sampler<number[]> {
   const { n, weights } = options;
   assertCount(n, "n");

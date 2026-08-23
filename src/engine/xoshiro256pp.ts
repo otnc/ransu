@@ -19,6 +19,14 @@ const LONG_JUMP = [
   0x39109bb0, 0x2acbe635,
 ];
 
+/**
+ * The xoshiro256++ engine. Build one with {@link xoshiro256pp}.
+ *
+ * @example
+ * ```ts
+ * xoshiro256pp(42) instanceof Xoshiro256pp; // true
+ * ```
+ */
 export class Xoshiro256pp extends PrngEngine {
   readonly algorithm = "xoshiro256++";
 
@@ -134,6 +142,22 @@ function state(words: Uint32Array): Uint32Array {
   return s;
 }
 
+/**
+ * xoshiro256++ — 256 bits of state.
+ *
+ * The same family as {@link xoshiro128pp} with a longer period, and the one
+ * to pick when you need `jump()` to hand disjoint streams to parallel
+ * workers.
+ *
+ * @example
+ * ```ts
+ * const source = xoshiro256pp(42);
+ * source.nextUint32(); // 1573169414
+ *
+ * // Non-overlapping streams for parallel work.
+ * const [a, b, c] = source.split(3);
+ * ```
+ */
 export function xoshiro256pp(seed?: Seed): Xoshiro256pp {
   return new Xoshiro256pp(state(initialWords(seed, 8)));
 }

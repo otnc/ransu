@@ -17,9 +17,17 @@ function units(alphabet: string | ArrayLike<string>): ArrayLike<string> {
 }
 
 /**
- * Split a string into user-perceived characters, keeping emoji sequences,
- * combining marks and flags together. Falls back to code points where
- * `Intl.Segmenter` is unavailable.
+ * A random string of `count` grapheme clusters — what a reader calls
+ * "characters".
+ *
+ * A flag or an emoji with a skin-tone modifier is several code points that
+ * display as one glyph. {@link chars} counts code points and would split
+ * them; this counts what you see.
+ *
+ * @example
+ * ```ts
+ * graphemes(3); // three visible characters, whatever they cost in code points
+ * ```
  */
 export function graphemes(value: string, locale?: string): string[] {
   const Segmenter = (Intl as { Segmenter?: typeof Intl.Segmenter }).Segmenter;

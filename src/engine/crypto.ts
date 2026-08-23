@@ -6,6 +6,15 @@ import type { Engine } from "./types";
 
 const POOL_WORDS = 256;
 
+/**
+ * The platform CSPRNG behind the engine interface. The singleton
+ * {@link cryptoRandom} is the only instance you need.
+ *
+ * @example
+ * ```ts
+ * cryptoRandom instanceof CryptoEngine; // true
+ * ```
+ */
 export class CryptoEngine implements Engine {
   readonly algorithm = "crypto";
   readonly seedable = false;
@@ -44,5 +53,19 @@ export class CryptoEngine implements Engine {
   }
 }
 
-/** The shared CSPRNG-backed engine. */
+/**
+ * The platform CSPRNG, wrapped as an engine.
+ *
+ * `crypto.getRandomValues` in browsers, workers and edge runtimes;
+ * `node:crypto` on Node. Unpredictable, and for that reason not seedable —
+ * which is what backs `ransu/secure` and the identifier functions.
+ *
+ * @example
+ * ```ts
+ * cryptoRandom.nextUint32(); // unpredictable
+ * cryptoRandom.seedable;     // false
+ *
+ * new Random(cryptoRandom).pick(["a", "b", "c"]);
+ * ```
+ */
 export const cryptoRandom: CryptoEngine = /* @__PURE__ */ new CryptoEngine();

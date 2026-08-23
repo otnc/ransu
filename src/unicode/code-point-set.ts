@@ -67,9 +67,21 @@ function subtract(
 }
 
 /**
- * A precomputed set of code points to draw from. The standalone functions
- * resolve and cache one of these per distinct set of options, so build one
- * yourself only to hold onto it explicitly or to use `at` and `size`.
+ * A resolved set of code points to draw from.
+ *
+ * The string functions resolve and cache one of these per distinct set of
+ * options, so build one yourself only to hold onto it explicitly or to use
+ * `at` and `size`.
+ *
+ * @example
+ * ```ts
+ * const kana = new CodePointSet({ blocks: ["hiragana", "katakana"] });
+ * kana.size;   // 189
+ * kana.at(0);  // 12353, the first code point in the set
+ *
+ * char(kana);  // "ネ"
+ * chars(8, kana);
+ * ```
  */
 export class CodePointSet {
   readonly ranges: readonly CodePointRange[];

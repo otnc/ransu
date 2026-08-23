@@ -15,6 +15,16 @@ export interface ExponentialOptions extends DistributionOptions {
   rate?: number;
 }
 
+/**
+ * Exponential: the wait until the next event of a Poisson process.
+ *
+ * @example
+ * ```ts
+ * const wait = exponential({ rate: 0.5 });
+ * wait.sample(); // 3.2188...
+ * wait.mean;     // 2, which is 1 / rate
+ * ```
+ */
 export function exponential(options: ExponentialOptions = {}): NumberSampler {
   const { rate = 1 } = options;
   assertPositive(rate, "rate");
@@ -31,6 +41,15 @@ export interface GammaOptions extends DistributionOptions {
   scale?: number;
 }
 
+/**
+ * Gamma, by Marsaglia and Tsang's method.
+ *
+ * @example
+ * ```ts
+ * const g = gamma({ shape: 2, scale: 10 });
+ * g.sample(); // 14.726...
+ * ```
+ */
 export function gamma(options: GammaOptions): NumberSampler {
   const { shape, scale = 1 } = options;
   assertPositive(shape, "shape");
@@ -48,6 +67,16 @@ export interface BetaOptions extends DistributionOptions {
   beta: number;
 }
 
+/**
+ * Beta: a value in `(0, 1)`, shaped by two positive parameters.
+ *
+ * @example
+ * ```ts
+ * const rate = beta({ alpha: 2, beta: 5 });
+ * rate.sample(); // 0.2734...  skewed toward 0
+ * rate.mean;     // 0.2857...
+ * ```
+ */
 export function beta(options: BetaOptions): NumberSampler {
   const { alpha, beta: b } = options;
   assertPositive(alpha, "alpha");
@@ -69,6 +98,14 @@ export interface ChiSquaredOptions extends DistributionOptions {
   df: number;
 }
 
+/**
+ * Chi-squared with `df` degrees of freedom.
+ *
+ * @example
+ * ```ts
+ * chiSquared({ df: 3 }).sample(); // 2.3661...
+ * ```
+ */
 export function chiSquared(options: ChiSquaredOptions): NumberSampler {
   const { df } = options;
   assertPositive(df, "df");
@@ -80,6 +117,14 @@ export interface StudentTOptions extends DistributionOptions {
   df: number;
 }
 
+/**
+ * Student's t: a normal with heavier tails, converging on one as `df` grows.
+ *
+ * @example
+ * ```ts
+ * studentT({ df: 5 }).sample(); // -0.8412...
+ * ```
+ */
 export function studentT(options: StudentTOptions): NumberSampler {
   const { df } = options;
   assertPositive(df, "df");
@@ -97,6 +142,14 @@ export interface FOptions extends DistributionOptions {
   d2: number;
 }
 
+/**
+ * Fisher's F: the ratio of two chi-squared variables over their degrees of freedom. Exported as `fisherF`.
+ *
+ * @example
+ * ```ts
+ * fisherF({ d1: 8, d2: 12 }).sample(); // 1.1274...
+ * ```
+ */
 export function f(options: FOptions): NumberSampler {
   const { d1, d2 } = options;
   assertPositive(d1, "d1");

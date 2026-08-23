@@ -47,6 +47,14 @@ export interface PoissonOptions extends DistributionOptions {
   lambda: number;
 }
 
+/**
+ * Poisson: events in one interval, given a mean rate.
+ *
+ * @example
+ * ```ts
+ * poisson({ lambda: 4 }).sample(); // 3
+ * ```
+ */
 export function poisson(options: PoissonOptions): NumberSampler {
   const { lambda } = options;
   assertFinite(lambda, "lambda");

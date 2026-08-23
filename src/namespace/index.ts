@@ -90,6 +90,27 @@ export interface RansuApi extends Omit<typeof api, "default"> {
   default: RansuApi;
 }
 
+/**
+ * Every function in one object, and callable itself as a shorthand for
+ * {@link random}.
+ *
+ * The default export. Each property is the very same function object as the
+ * matching named export, not a wrapper around it.
+ *
+ * @example
+ * ```ts
+ * import ransu from "ransu";
+ *
+ * ransu();            // 0.7401962...  same as ransu.random()
+ * ransu.integer(1, 6);
+ * ransu.pick(["a", "b", "c"]);
+ * ransu.uuid.v7();
+ * ransu.engines.pcg32(42);
+ *
+ * // Seeding here changes every top-level function.
+ * ransu.seed(42);
+ * ```
+ */
 export const ransu: RansuApi = /* @__PURE__ */ (() => {
   const callable = (): number => fn.random();
   const target = Object.assign(callable, api) as unknown as RansuApi;

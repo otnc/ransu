@@ -30,6 +30,14 @@ function quarterRound(
   x[b] = rotl(x[b] ^ x[c], 7);
 }
 
+/**
+ * The ChaCha20 engine. Build one with {@link chacha20}.
+ *
+ * @example
+ * ```ts
+ * chacha20(42) instanceof ChaCha20; // true
+ * ```
+ */
 export class ChaCha20 extends PrngEngine {
   readonly algorithm = "chacha20";
 
@@ -103,6 +111,23 @@ function seedState(words: Uint32Array): Uint32Array {
   return s;
 }
 
+/**
+ * ChaCha20 — a cryptographic stream cipher used as a generator.
+ *
+ * The only engine that is both seedable and unpredictable: knowing any
+ * number of outputs does not reveal the rest. Use it when a stream must be
+ * reproducible *and* resistant to prediction; for secrets with no
+ * reproducibility requirement, `ransu/secure` is simpler.
+ *
+ * @example
+ * ```ts
+ * const source = chacha20(12345);
+ * source.nextUint32(); // 1274611588
+ *
+ * // Reproducible, unlike the platform CSPRNG.
+ * chacha20(1).nextUint32() === chacha20(1).nextUint32(); // true
+ * ```
+ */
 export function chacha20(seed?: Seed): ChaCha20 {
   return new ChaCha20(seedState(initialWords(seed, 12)));
 }

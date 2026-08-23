@@ -3,6 +3,15 @@ import { raise } from "../internal/errors";
 /** An inclusive code point range, `[first, last]`. */
 export type CodePointRange = readonly [number, number];
 
+/**
+ * The largest Unicode code point, `U+10FFFF`.
+ *
+ * @example
+ * ```ts
+ * MAX_CODE_POINT;                    // 1114111
+ * codePoint({ ranges: [[0, MAX_CODE_POINT]] });
+ * ```
+ */
 export const MAX_CODE_POINT = 0x10ffff;
 export const SURROGATES: CodePointRange = [0xd800, 0xdfff];
 export const CONTROL: readonly CodePointRange[] = [
@@ -57,8 +66,17 @@ const EMOJI: readonly CodePointRange[] = [
 ];
 
 /**
- * Named code point ranges. `all` spans every scalar value, most of which are
- * still unassigned; `printable` is the curated set that actually renders.
+ * The named Unicode blocks the string functions accept.
+ *
+ * @example
+ * ```ts
+ * import { char, unicodeRanges } from "ransu";
+ *
+ * Object.keys(unicodeRanges); // "printable", "latin", "hiragana", ...
+ *
+ * char({ blocks: "hiragana" });
+ * char({ blocks: ["hiragana", "katakana"] });
+ * ```
  */
 export const unicodeRanges = {
   ascii: ASCII,

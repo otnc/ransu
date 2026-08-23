@@ -1,7 +1,14 @@
 import type { Seed, SeedSequence } from "../seed/sequence";
 import { ensureNonZero, initialWords, PrngEngine } from "./prng-engine";
 
-/** sfc32 (Small Fast Counter). Four words of state, very short inner loop. */
+/**
+ * The sfc32 engine. Build one with {@link sfc32}.
+ *
+ * @example
+ * ```ts
+ * sfc32(42) instanceof Sfc32; // true
+ * ```
+ */
 export class Sfc32 extends PrngEngine {
   readonly algorithm = "sfc32";
 
@@ -34,6 +41,18 @@ function warmUp(engine: Sfc32): Sfc32 {
   return engine;
 }
 
+/**
+ * sfc32 — Small Fast Counting, 128 bits of state.
+ *
+ * About as fast as anything here and very small. Chosen when speed matters
+ * more than a proven period.
+ *
+ * @example
+ * ```ts
+ * const source = sfc32(42);
+ * source.nextUint32(); // 261194151
+ * ```
+ */
 export function sfc32(seed?: Seed): Sfc32 {
   return warmUp(new Sfc32(ensureNonZero(initialWords(seed, 4))));
 }

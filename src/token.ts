@@ -40,7 +40,15 @@ function base64url(bytes: Uint8Array): string {
   return out;
 }
 
-/** A URL-safe secret token with `bytes` bytes of entropy. CSPRNG-backed. */
+/**
+ * A URL-safe secret token with `bytes` bytes of entropy. CSPRNG-backed.
+ *
+ * @example
+ * ```ts
+ * token();    // "xK3n_9QpZ..."  32 bytes as base64url
+ * token(16);  // shorter, still from the platform CSPRNG
+ * ```
+ */
 export function token(bytes = 32, options: TokenOptions = {}): string {
   assertLength(bytes, "bytes");
   const buffer = new Uint8Array(bytes);
@@ -48,7 +56,15 @@ export function token(bytes = 32, options: TokenOptions = {}): string {
   return base64url(buffer);
 }
 
-/** A numeric one-time code. Leading zeros are preserved. */
+/**
+ * A numeric one-time code. Leading zeros are preserved.
+ *
+ * @example
+ * ```ts
+ * otp();   // "047215"  six digits, leading zero kept
+ * otp(8);  // "90114862"
+ * ```
+ */
 export function otp(digits = 6, options: TokenOptions = {}): string {
   assertLength(digits, "digits");
   return randomString(
@@ -75,6 +91,13 @@ const AMBIGUOUS = new Set("0O1lI|`");
 /**
  * A random password. With `requireEach` the result holds at least one character
  * from every enabled class, then gets shuffled so their positions are random.
+ *
+ * @example
+ * ```ts
+ * password();            // "vK8mQ2xL9pT4nR7c"
+ * password(24, { symbols: true, requireEach: true });
+ * password(12, { uppercase: false, symbols: false });
+ * ```
  */
 export function password(length = 16, options: PasswordOptions = {}): string {
   assertLength(length, "length");

@@ -21,6 +21,14 @@ export interface GeometricOptions extends DistributionOptions {
   support?: "trials" | "failures";
 }
 
+/**
+ * Geometric: the trial the first success lands on, counting from 1.
+ *
+ * @example
+ * ```ts
+ * geometric({ p: 0.1 }).sample(); // 7
+ * ```
+ */
 export function geometric(options: GeometricOptions): NumberSampler {
   const { p, support = "trials" } = options;
   assertProbability(p, "p");
@@ -45,7 +53,14 @@ export interface NegativeBinomialOptions extends DistributionOptions {
   p: number;
 }
 
-/** The number of failures before the `r`-th success, as a gamma-Poisson mixture. */
+/**
+ * Negative binomial: failures before the `r`-th success.
+ *
+ * @example
+ * ```ts
+ * negativeBinomial({ r: 3, p: 0.5 }).sample(); // 4
+ * ```
+ */
 export function negativeBinomial(
   options: NegativeBinomialOptions
 ): NumberSampler {

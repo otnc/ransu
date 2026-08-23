@@ -20,6 +20,12 @@ export interface Rect {
  * Normalised Gaussians, which is the only construction that stays uniform on
  * the sphere in every dimension. Picking each coordinate uniformly and
  * normalising concentrates points toward the corners of the cube.
+ *
+ * @example
+ * ```ts
+ * unitVector();  // [ -0.6018, 0.7986 ]   length 1
+ * unitVector(3); // [ 0.2673, -0.5345, 0.8018 ]
+ * ```
  */
 export function unitVector(dimensions = 2): Point {
   assertLength(dimensions, "dimensions");
@@ -43,7 +49,14 @@ export function unitVector(dimensions = 2): Point {
   }
 }
 
-/** A uniform point on the circumference of a circle. */
+/**
+ * A uniform point on the circumference of a circle.
+ *
+ * @example
+ * ```ts
+ * onCircle(100); // [ -70.7, 70.7 ]   always exactly 100 from the origin
+ * ```
+ */
 export function onCircle(radius = 1): Point {
   assertFinite(radius, "radius");
   const angle = globalSource().f64() * 2 * Math.PI;
@@ -55,6 +68,11 @@ export function onCircle(radius = 1): Point {
  *
  * The square root matters: without it, points bunch up at the centre, because
  * the area at radius `r` grows with `r`.
+ *
+ * @example
+ * ```ts
+ * inCircle(50); // [ 12.4, -31.8 ]   evenly spread over the disc
+ * ```
  */
 export function inCircle(radius = 1): Point {
   assertFinite(radius, "radius");
@@ -64,14 +82,29 @@ export function inCircle(radius = 1): Point {
   return [distance * Math.cos(angle), distance * Math.sin(angle)];
 }
 
-/** A uniform point on the surface of a sphere. */
+/**
+ * A uniform point on the surface of a sphere.
+ *
+ * @example
+ * ```ts
+ * onSphere(1);    // [ 0.267, -0.534, 0.801 ]
+ * onSphere(2, 4); // a point on a 4-dimensional sphere of radius 2
+ * ```
+ */
 export function onSphere(radius = 1, dimensions = 3): Point {
   assertFinite(radius, "radius");
   const direction = unitVector(dimensions);
   return direction.map((value) => value * radius);
 }
 
-/** A uniform point inside a ball, by volume. */
+/**
+ * A uniform point inside a ball, by volume.
+ *
+ * @example
+ * ```ts
+ * inSphere(10); // [ 3.1, -5.7, 1.2 ]
+ * ```
+ */
 export function inSphere(radius = 1, dimensions = 3): Point {
   assertFinite(radius, "radius");
   const direction = unitVector(dimensions);
@@ -80,7 +113,14 @@ export function inSphere(radius = 1, dimensions = 3): Point {
   return direction.map((value) => value * distance);
 }
 
-/** A uniform point inside a rectangle. */
+/**
+ * A uniform point inside a rectangle.
+ *
+ * @example
+ * ```ts
+ * inRect({ x: 0, y: 0, width: 1920, height: 1080 }); // [ 842.1, 219.7 ]
+ * ```
+ */
 export function inRect(rect: Rect): Point {
   const { x = 0, y = 0, width, height } = rect;
   assertFinite(x, "x");
@@ -91,12 +131,26 @@ export function inRect(rect: Rect): Point {
   return [x + src.f64() * width, y + src.f64() * height];
 }
 
-/** A uniform angle in radians, in `[0, 2pi)`. */
+/**
+ * A uniform angle in radians, in `[0, 2pi)`.
+ *
+ * @example
+ * ```ts
+ * angle(); // 2.4913...
+ * ```
+ */
 export function angle(): number {
   return globalSource().f64() * 2 * Math.PI;
 }
 
-/** A uniform angle in degrees, in `[0, 360)`. */
+/**
+ * A uniform angle in degrees, in `[0, 360)`.
+ *
+ * @example
+ * ```ts
+ * angleDegrees(); // 142.74...
+ * ```
+ */
 export function angleDegrees(): number {
   return globalSource().f64() * 360;
 }

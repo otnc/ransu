@@ -16,7 +16,14 @@ export interface BernoulliOptions extends DistributionOptions {
   p?: number;
 }
 
-/** `1` with probability `p`, otherwise `0`. */
+/**
+ * Bernoulli: `1` with probability `p`, otherwise `0`.
+ *
+ * @example
+ * ```ts
+ * bernoulli({ p: 0.25 }).sample(); // 0
+ * ```
+ */
 export function bernoulli(options: BernoulliOptions = {}): NumberSampler {
   const { p = 0.5 } = options;
   assertProbability(p, "p");
@@ -29,7 +36,14 @@ export interface DiscreteUniformOptions extends DistributionOptions {
   max: number;
 }
 
-/** Uniform over the integers in `[min, max]`, both ends included. */
+/**
+ * A uniform integer in `[min, max]`, both ends included.
+ *
+ * @example
+ * ```ts
+ * discreteUniform({ min: 1, max: 6 }).sample(); // 4
+ * ```
+ */
 export function discreteUniform(
   options: DiscreteUniformOptions
 ): NumberSampler {
@@ -51,7 +65,15 @@ export interface CategoricalOptions extends DistributionOptions {
   weights: ArrayLike<number>;
 }
 
-/** An index in `[0, weights.length)`, drawn in O(1) via the alias method. */
+/**
+ * Categorical: an index in `[0, weights.length)`, proportional to the weights. Uses Vose's alias method, so each draw is O(1).
+ *
+ * @example
+ * ```ts
+ * const tier = categorical({ weights: [1, 3, 6] });
+ * tier.sample(); // 2, most of the time
+ * ```
+ */
 export function categorical(options: CategoricalOptions): NumberSampler {
   const { weights } = options;
   const src = resolveSource(options.engine);

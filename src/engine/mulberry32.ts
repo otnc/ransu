@@ -2,8 +2,12 @@ import type { Seed, SeedSequence } from "../seed/sequence";
 import { initialWords, PrngEngine } from "./prng-engine";
 
 /**
- * mulberry32. One word of state, for when code size dominates. The period is
- * only 2^32, so it suits neither long runs nor many parallel streams.
+ * The mulberry32 engine. Build one with {@link mulberry32}.
+ *
+ * @example
+ * ```ts
+ * mulberry32(42) instanceof Mulberry32; // true
+ * ```
  */
 export class Mulberry32 extends PrngEngine {
   readonly algorithm = "mulberry32";
@@ -22,6 +26,18 @@ export class Mulberry32 extends PrngEngine {
   }
 }
 
+/**
+ * mulberry32 — 32 bits of state, a dozen lines of arithmetic.
+ *
+ * The smallest engine here. Its 2^32 period is short enough to matter in a
+ * long run, so prefer it only where the state size is the constraint.
+ *
+ * @example
+ * ```ts
+ * const source = mulberry32(42);
+ * source.nextUint32(); // 2744357186
+ * ```
+ */
 export function mulberry32(seed?: Seed): Mulberry32 {
   return new Mulberry32(initialWords(seed, 1));
 }

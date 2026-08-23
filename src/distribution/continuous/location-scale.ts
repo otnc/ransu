@@ -16,6 +16,16 @@ export interface LocationScaleOptions extends DistributionOptions {
   scale?: number;
 }
 
+/**
+ * Cauchy. It has no mean or variance, so both read `NaN` and extreme outliers are normal.
+ *
+ * @example
+ * ```ts
+ * const c = cauchy({ location: 0, scale: 1 });
+ * c.sample(); // -0.4142...  and occasionally enormous
+ * c.mean;     // NaN
+ * ```
+ */
 export function cauchy(options: LocationScaleOptions = {}): NumberSampler {
   const { location = 0, scale = 1 } = options;
   assertFinite(location, "location");
@@ -28,6 +38,14 @@ export function cauchy(options: LocationScaleOptions = {}): NumberSampler {
   );
 }
 
+/**
+ * Laplace: two exponential tails back to back.
+ *
+ * @example
+ * ```ts
+ * laplace({ location: 0, scale: 1 }).sample(); // 0.3819...
+ * ```
+ */
 export function laplace(options: LocationScaleOptions = {}): NumberSampler {
   const { location = 0, scale = 1 } = options;
   assertFinite(location, "location");
@@ -43,6 +61,14 @@ export function laplace(options: LocationScaleOptions = {}): NumberSampler {
   );
 }
 
+/**
+ * Logistic, the distribution behind the sigmoid.
+ *
+ * @example
+ * ```ts
+ * logistic({ location: 0, scale: 1 }).sample(); // -0.2231...
+ * ```
+ */
 export function logistic(options: LocationScaleOptions = {}): NumberSampler {
   const { location = 0, scale = 1 } = options;
   assertFinite(location, "location");
@@ -58,6 +84,14 @@ export function logistic(options: LocationScaleOptions = {}): NumberSampler {
   );
 }
 
+/**
+ * Gumbel: the distribution of a maximum, used for extreme-value work.
+ *
+ * @example
+ * ```ts
+ * gumbel({ location: 0, scale: 1 }).sample(); // 0.4759...
+ * ```
+ */
 export function gumbel(options: LocationScaleOptions = {}): NumberSampler {
   const { location = 0, scale = 1 } = options;
   assertFinite(location, "location");
@@ -76,6 +110,15 @@ export interface ShapeScaleOptions extends DistributionOptions {
   scale?: number;
 }
 
+/**
+ * Pareto: the heavy-tailed shape behind the 80/20 rule.
+ *
+ * @example
+ * ```ts
+ * const wealth = pareto({ shape: 1.16, scale: 1000 });
+ * wealth.sample(); // 1872.1...
+ * ```
+ */
 export function pareto(options: ShapeScaleOptions): NumberSampler {
   const { shape, scale = 1 } = options;
   assertPositive(shape, "shape");
@@ -90,6 +133,14 @@ export function pareto(options: ShapeScaleOptions): NumberSampler {
   );
 }
 
+/**
+ * Weibull, used for time until failure.
+ *
+ * @example
+ * ```ts
+ * weibull({ shape: 1.5, scale: 100 }).sample(); // 79.43...
+ * ```
+ */
 export function weibull(options: ShapeScaleOptions): NumberSampler {
   const { shape, scale = 1 } = options;
   assertPositive(shape, "shape");
@@ -108,6 +159,14 @@ export interface RayleighOptions extends DistributionOptions {
   scale?: number;
 }
 
+/**
+ * Rayleigh: the length of a two-dimensional Gaussian vector.
+ *
+ * @example
+ * ```ts
+ * rayleigh({ scale: 1 }).sample(); // 1.1774...
+ * ```
+ */
 export function rayleigh(options: RayleighOptions = {}): NumberSampler {
   const { scale = 1 } = options;
   assertPositive(scale, "scale");
@@ -125,6 +184,14 @@ export interface TriangularOptions extends DistributionOptions {
   mode?: number;
 }
 
+/**
+ * Triangular over `[min, max]`, peaking at `mode` (the midpoint by default). The usual stand-in when all you have is a best, worst and likely case.
+ *
+ * @example
+ * ```ts
+ * triangular({ min: 0, max: 10, mode: 9 }).sample(); // 7.8102...
+ * ```
+ */
 export function triangular(options: TriangularOptions): NumberSampler {
   const { min, max } = options;
   const mode = options.mode ?? (min + max) / 2;

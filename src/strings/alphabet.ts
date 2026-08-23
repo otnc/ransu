@@ -3,8 +3,16 @@ const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const DIGITS = "0123456789";
 
 /**
- * Ready-made character sets. `unambiguous` drops characters people misread when
- * transcribing (`0/O`, `1/l/I`); `base58` is the Bitcoin ordering.
+ * The named alphabets `string()` accepts, for building your own.
+ *
+ * @example
+ * ```ts
+ * import { alphabets, string } from "ransu";
+ *
+ * string(8, alphabets.lower);              // "qmzdfhbx"
+ * string(8, alphabets.alphanumeric);       // the default
+ * string(8, alphabets.hex + alphabets.upper); // combine them as strings
+ * ```
  */
 export const alphabets = {
   lower: LOWER,

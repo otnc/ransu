@@ -12,7 +12,15 @@ function toMillis(value: TimeInput, name: string): number {
   return millis;
 }
 
-/** A `Date` in `[from, to)`. */
+/**
+ * A `Date` in `[from, to)`.
+ *
+ * @example
+ * ```ts
+ * date(new Date("2020-01-01"), new Date("2030-01-01")); // 2026-08-23T09:12:44.019Z
+ * date(0, Date.now());  // any moment since the epoch; numbers are epoch millis
+ * ```
+ */
 export function date(from: TimeInput, to: TimeInput): Date {
   const start = toMillis(from, "from");
   const end = toMillis(to, "to");
@@ -20,19 +28,41 @@ export function date(from: TimeInput, to: TimeInput): Date {
   return new Date(start + Math.floor(float(globalSource(), 0, end - start)));
 }
 
-/** A `Date` within the last `days` (default 7). */
+/**
+ * A `Date` within the last `days` (default 7).
+ *
+ * @example
+ * ```ts
+ * pastDate();    // some time in the last week
+ * pastDate(365); // some time in the last year
+ * ```
+ */
 export function pastDate(days = 7): Date {
   const now = Date.now();
   return date(now - days * 86_400_000, now);
 }
 
-/** A `Date` within the next `days` (default 7). */
+/**
+ * A `Date` within the next `days` (default 7).
+ *
+ * @example
+ * ```ts
+ * futureDate(30); // some time in the next month
+ * ```
+ */
 export function futureDate(days = 7): Date {
   const now = Date.now();
   return date(now, now + days * 86_400_000);
 }
 
-/** A duration in milliseconds, in `[min, max)`. */
+/**
+ * A duration in milliseconds, in `[min, max)`.
+ *
+ * @example
+ * ```ts
+ * duration(500, 2_000); // 1342
+ * ```
+ */
 export function duration(min: number, max: number): number {
   assertFinite(min, "min");
   assertFinite(max, "max");
@@ -43,6 +73,12 @@ export function duration(min: number, max: number): number {
 /**
  * Spread a value by `+/- factor` so that things scheduled together stop
  * arriving together. `jitter(1000, 0.1)` lands in `[900, 1100)`.
+ *
+ * @example
+ * ```ts
+ * jitter(1_000);       // 964.27...   within 10%
+ * jitter(1_000, 0.5);  // 1387.51...  within 50%
+ * ```
  */
 export function jitter(base: number, factor = 0.1): number {
   assertFinite(base, "base");
@@ -79,6 +115,15 @@ export interface BackoffOptions {
  *
  * Retrying on a fixed schedule makes every client in a fleet retry at the same
  * instant; the jitter strategies exist to break that up.
+ *
+ * @example
+ * ```ts
+ * backoff(0); // 87.3    around 100ms
+ * backoff(1); // 213.9   around 200ms
+ * backoff(4); // 1483.2  around 1.6s, capped by maxDelay
+ *
+ * backoff(3, { base: 250, factor: 3, jitter: "equal" });
+ * ```
  */
 export function backoff(attempt: number, options: BackoffOptions = {}): number {
   const {
