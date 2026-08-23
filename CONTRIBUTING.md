@@ -48,7 +48,7 @@ cannot drift onto different versions.
 | `pnpm docs:deploy` | Build the docs and push them to Cloudflare |
 | `pnpm smoke` | Check every import shape against the built `dist/` (needs `pnpm build` first) |
 | `pnpm check:types` | Check the published types resolve under every module mode (needs `pnpm build` first) |
-| `pnpm check:examples` | Run every `@example` in the source against the built package (needs `pnpm build` first) |
+| `pnpm check:examples` | Run and type-check every `@example` against the built package (needs `pnpm build` first) |
 
 Before opening a pull request, make sure the full set passes:
 
