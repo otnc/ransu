@@ -45,7 +45,8 @@ cannot drift onto different versions.
 | `pnpm bench` | Measure throughput against `Math.random` (needs `pnpm build` first) |
 | `pnpm docs` | Run the documentation site locally |
 | `pnpm docs:build` | Build the site, including the generated API reference |
-| `pnpm docs:deploy` | Build the docs and push them to Cloudflare |
+| `pnpm docs:deploy` | Push the built docs to Cloudflare, live immediately (needs `pnpm docs:build` first) |
+| `pnpm docs:version` | Upload a Cloudflare version/preview without shifting production traffic (needs `pnpm docs:build` first) |
 | `pnpm smoke` | Check every import shape against the built `dist/` (needs `pnpm build` first) |
 | `pnpm check:types` | Check the published types resolve under every module mode (needs `pnpm build` first) |
 | `pnpm check:examples` | Run every `@example` in the source against the built package (needs `pnpm build` first) |
