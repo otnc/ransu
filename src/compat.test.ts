@@ -12,11 +12,15 @@ import { Random } from "./random";
 describe("toMathRandom", () => {
   it("returns doubles in [0, 1) from a Random", () => {
     const fn = toMathRandom(new Random(1));
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 1_000; i++) {
       const value = fn();
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(1);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(0);
+    expect(highest).toBeLessThan(1);
   });
 
   it("stays reproducible, which is the whole point", () => {

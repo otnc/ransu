@@ -14,11 +14,15 @@ const src = () => createSource(xoshiro128pp(20260821));
 describe("random / float", () => {
   it("stays within [0, 1)", () => {
     const s = src();
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 20_000; i++) {
       const value = random(s);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(1);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(0);
+    expect(highest).toBeLessThan(1);
   });
 
   it("uses the full 53 bits of mantissa", () => {
@@ -32,20 +36,28 @@ describe("random / float", () => {
 
   it("maps onto [min, max)", () => {
     const s = src();
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 5_000; i++) {
       const value = float(s, -3, 7);
-      expect(value).toBeGreaterThanOrEqual(-3);
-      expect(value).toBeLessThan(7);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(-3);
+    expect(highest).toBeLessThan(7);
   });
 
   it("treats a lone argument as the upper bound", () => {
     const s = src();
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 1_000; i++) {
       const value = float(s, 5);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(5);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(0);
+    expect(highest).toBeLessThan(5);
   });
 
   it("rejects a reversed range", () => {
@@ -100,12 +112,18 @@ describe("integer", () => {
     const s = src();
     const min = -(2 ** 40);
     const max = 2 ** 40;
+    let allSafe = true;
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 5_000; i++) {
       const value = integer(s, min, max);
-      expect(Number.isSafeInteger(value)).toBe(true);
-      expect(value).toBeGreaterThanOrEqual(min);
-      expect(value).toBeLessThanOrEqual(max);
+      if (!Number.isSafeInteger(value)) allSafe = false;
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(allSafe).toBe(true);
+    expect(lowest).toBeGreaterThanOrEqual(min);
+    expect(highest).toBeLessThanOrEqual(max);
   });
 
   it("covers the whole 32-bit range exactly", () => {
@@ -132,11 +150,15 @@ describe("integer", () => {
 describe("below", () => {
   it("excludes the upper bound", () => {
     const s = src();
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 5_000; i++) {
       const value = below(s, 4);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(4);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(0);
+    expect(highest).toBeLessThan(4);
   });
 
   it("rejects zero and negative bounds", () => {
@@ -203,11 +225,15 @@ describe("bits", () => {
   it("respects the requested width", () => {
     const s = src();
     for (const width of [1, 7, 31, 32, 33, 53]) {
+      let lowest = Infinity;
+      let highest = -Infinity;
       for (let i = 0; i < 200; i++) {
         const value = bits(s, width);
-        expect(value).toBeGreaterThanOrEqual(0);
-        expect(value).toBeLessThan(2 ** width);
+        if (value < lowest) lowest = value;
+        if (value > highest) highest = value;
       }
+      expect(lowest).toBeGreaterThanOrEqual(0);
+      expect(highest).toBeLessThan(2 ** width);
     }
   });
 

@@ -127,14 +127,16 @@ describe("randomCodePoint", () => {
     const s = src();
     let small = 0;
     const draws = 60_000;
+    // Hoisted: rebuilding the options object each iteration measured the cost
+    // of the literal, not of the draw.
+    const options = {
+      ranges: [
+        [0x41, 0x41],
+        [0x61, 0x69],
+      ],
+    } as const;
     for (let i = 0; i < draws; i++) {
-      const cp = randomCodePoint(s, {
-        ranges: [
-          [0x41, 0x41],
-          [0x61, 0x69],
-        ],
-      });
-      if (cp === 0x41) small++;
+      if (randomCodePoint(s, options) === 0x41) small++;
     }
     // One code point out of ten.
     expect(small / draws).toBeCloseTo(0.1, 2);
@@ -169,11 +171,16 @@ describe("randomCodePoint", () => {
 describe("randomChar and randomChars", () => {
   it("produces well-formed single characters", () => {
     const s = src();
+    let single = true;
+    let lowest = Infinity;
     for (let i = 0; i < 2_000; i++) {
       const char = randomChar(s, { blocks: "emoji" });
-      expect([...char]).toHaveLength(1);
-      expect(char.codePointAt(0)).toBeGreaterThan(0x2000);
+      if ([...char].length !== 1) single = false;
+      const cp = char.codePointAt(0) ?? 0;
+      if (cp < lowest) lowest = cp;
     }
+    expect(single).toBe(true);
+    expect(lowest).toBeGreaterThan(0x2000);
   });
 
   it("counts length in code points, not UTF-16 units", () => {

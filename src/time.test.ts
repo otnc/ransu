@@ -34,19 +34,27 @@ describe("date", () => {
 
 describe("duration and jitter", () => {
   it("duration stays in range", () => {
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 1_000; i++) {
       const value = duration(100, 200);
-      expect(value).toBeGreaterThanOrEqual(100);
-      expect(value).toBeLessThan(200);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(100);
+    expect(highest).toBeLessThan(200);
   });
 
   it("jitter spreads within the factor", () => {
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 5_000; i++) {
       const value = jitter(1_000, 0.1);
-      expect(value).toBeGreaterThanOrEqual(900);
-      expect(value).toBeLessThan(1_100);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(900);
+    expect(highest).toBeLessThan(1_100);
   });
 
   it("jitter of 0 is the identity", () => {
@@ -80,11 +88,15 @@ describe("backoff", () => {
 
   it("equal jitter keeps half the delay", () => {
     const cap = 100 * 2 ** 4;
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 2_000; i++) {
       const value = backoff(4, { strategy: "equal" });
-      expect(value).toBeGreaterThanOrEqual(cap / 2);
-      expect(value).toBeLessThan(cap);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(cap / 2);
+    expect(highest).toBeLessThan(cap);
   });
 
   it("decorrelated walks up from the previous delay", () => {

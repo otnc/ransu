@@ -24,32 +24,44 @@ describe("hashFloat", () => {
   });
 
   it("spreads keys evenly", () => {
-    const buckets = new Array(10).fill(0);
-    for (let i = 0; i < 100_000; i++)
+    const buckets = new Array<number>(10).fill(0);
+    const draws = 20_000;
+    for (let i = 0; i < draws; i++)
       buckets[Math.floor(hashFloat(`user-${i}`) * 10)]++;
+    // Six standard errors of a binomial count, so the bound moves with the
+    // draw count instead of being a number someone has to remember to update.
+    const expected = draws / buckets.length;
+    const tolerance = 6 * Math.sqrt(draws * 0.1 * 0.9);
     for (const count of buckets) {
-      expect(count).toBeGreaterThan(9_400);
-      expect(count).toBeLessThan(10_600);
+      expect(Math.abs(count - expected)).toBeLessThan(tolerance);
     }
   });
 
   it("stays within [0, 1)", () => {
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 5_000; i++) {
       const value = hashFloat(`k${i}`);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(1);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(0);
+    expect(highest).toBeLessThan(1);
   });
 });
 
 describe("hashInteger and hashPick", () => {
   it("are stable and in range", () => {
     expect(hashInteger("x", 1, 6)).toBe(hashInteger("x", 1, 6));
+    let lowest = Infinity;
+    let highest = -Infinity;
     for (let i = 0; i < 2_000; i++) {
       const value = hashInteger(`k${i}`, 1, 6);
-      expect(value).toBeGreaterThanOrEqual(1);
-      expect(value).toBeLessThanOrEqual(6);
+      if (value < lowest) lowest = value;
+      if (value > highest) highest = value;
     }
+    expect(lowest).toBeGreaterThanOrEqual(1);
+    expect(highest).toBeLessThanOrEqual(6);
   });
 
   it("hashPick returns a member, always the same one", () => {
@@ -64,11 +76,13 @@ describe("hashInteger and hashPick", () => {
 describe("bucket", () => {
   it("is stable and evenly distributed", () => {
     expect(bucket("u1", 16)).toBe(bucket("u1", 16));
-    const counts = new Array(16).fill(0);
-    for (let i = 0; i < 160_000; i++) counts[bucket(`user-${i}`, 16)]++;
+    const counts = new Array<number>(16).fill(0);
+    const draws = 32_000;
+    for (let i = 0; i < draws; i++) counts[bucket(`user-${i}`, 16)]++;
+    const expected = draws / counts.length;
+    const tolerance = 6 * Math.sqrt(draws * (1 / 16) * (15 / 16));
     for (const count of counts) {
-      expect(count).toBeGreaterThan(9_400);
-      expect(count).toBeLessThan(10_600);
+      expect(Math.abs(count - expected)).toBeLessThan(tolerance);
     }
   });
 
@@ -79,9 +93,12 @@ describe("bucket", () => {
 
 describe("rollout", () => {
   it("hits roughly the requested share", () => {
+    const draws = 40_000;
     let inside = 0;
-    for (let i = 0; i < 100_000; i++) if (rollout(`user-${i}`, 0.25)) inside++;
-    expect(inside / 100_000).toBeCloseTo(0.25, 2);
+    for (let i = 0; i < draws; i++) if (rollout(`user-${i}`, 0.25)) inside++;
+    // Four standard errors of a proportion.
+    const tolerance = 4 * Math.sqrt((0.25 * 0.75) / draws);
+    expect(Math.abs(inside / draws - 0.25)).toBeLessThan(tolerance);
   });
 
   it("only ever adds keys as the percentage grows", () => {

@@ -213,9 +213,11 @@ describe("weightedPick", () => {
 
   it("never returns a zero-weight element", () => {
     const s = src();
+    let always = 0;
     for (let i = 0; i < 5_000; i++) {
-      expect(weightedPick(s, ["never", "always"], [0, 1])).toBe("always");
+      if (weightedPick(s, ["never", "always"], [0, 1]) === "always") always++;
     }
+    expect(always).toBe(5_000);
   });
 
   it("rejects bad weights", () => {

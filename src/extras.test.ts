@@ -98,15 +98,22 @@ describe("sampleIntegers", () => {
 
 describe("dice", () => {
   it("reads the usual notation", () => {
-    for (let i = 0; i < 500; i++) {
-      expect(dice("d6")).toBeGreaterThanOrEqual(1);
-      expect(dice("d6")).toBeLessThanOrEqual(6);
-      expect(dice("3d6")).toBeGreaterThanOrEqual(3);
-      expect(dice("3d6")).toBeLessThanOrEqual(18);
-      expect(dice("2d10+3")).toBeGreaterThanOrEqual(5);
-      expect(dice("2d10+3")).toBeLessThanOrEqual(23);
-      expect(dice("1d4-1")).toBeGreaterThanOrEqual(0);
-      expect(dice("1d4-1")).toBeLessThanOrEqual(3);
+    const cases: [string, number, number][] = [
+      ["d6", 1, 6],
+      ["3d6", 3, 18],
+      ["2d10+3", 5, 23],
+      ["1d4-1", 0, 3],
+    ];
+    for (const [notation, low, high] of cases) {
+      let lowest = Infinity;
+      let highest = -Infinity;
+      for (let i = 0; i < 500; i++) {
+        const total = dice(notation);
+        if (total < lowest) lowest = total;
+        if (total > highest) highest = total;
+      }
+      expect(lowest).toBeGreaterThanOrEqual(low);
+      expect(highest).toBeLessThanOrEqual(high);
     }
   });
 
