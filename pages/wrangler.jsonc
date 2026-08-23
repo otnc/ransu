@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ransu-docs",
+  "compatibility_date": "2026-08-01",
+  // Static assets only: there is no Worker script, so Cloudflare serves the
+  // built site directly from its edge. `pnpm docs:deploy` builds then uploads.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+}

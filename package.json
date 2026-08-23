@@ -3,9 +3,27 @@
   "version": "0.0.0",
   "description": "Convenient and easy-to-use random functions.",
   "keywords": [
-    "random number util uuid addon function functions"
+    "random",
+    "prng",
+    "rng",
+    "seed",
+    "seedable",
+    "shuffle",
+    "sample",
+    "weighted",
+    "uuid",
+    "uuidv4",
+    "uuidv7",
+    "ulid",
+    "nanoid",
+    "xoshiro",
+    "pcg",
+    "mersenne-twister",
+    "chacha20",
+    "csprng",
+    "typescript"
   ],
-  "homepage": "https://github.com/otnc/ransu#readme",
+  "homepage": "https://ransu.otnc.dev",
   "bugs": {
     "url": "https://github.com/otnc/ransu/issues"
   },
@@ -16,9 +34,10 @@
   "license": "MIT",
   "author": "otoneko.",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.mts",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
       "types": {
@@ -27,35 +46,213 @@
       },
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./color": {
+      "types": {
+        "import": "./dist/color.d.mts",
+        "require": "./dist/color.d.cts"
+      },
+      "import": "./dist/color.mjs",
+      "require": "./dist/color.cjs"
+    },
+    "./compat": {
+      "types": {
+        "import": "./dist/compat.d.mts",
+        "require": "./dist/compat.d.cts"
+      },
+      "import": "./dist/compat.mjs",
+      "require": "./dist/compat.cjs"
+    },
+    "./dice": {
+      "types": {
+        "import": "./dist/dice.d.mts",
+        "require": "./dist/dice.d.cts"
+      },
+      "import": "./dist/dice.mjs",
+      "require": "./dist/dice.cjs"
+    },
+    "./distribution": {
+      "types": {
+        "import": "./dist/distribution.d.mts",
+        "require": "./dist/distribution.d.cts"
+      },
+      "import": "./dist/distribution.mjs",
+      "require": "./dist/distribution.cjs"
+    },
+    "./engine": {
+      "types": {
+        "import": "./dist/engine.d.mts",
+        "require": "./dist/engine.d.cts"
+      },
+      "import": "./dist/engine.mjs",
+      "require": "./dist/engine.cjs"
+    },
+    "./geometry": {
+      "types": {
+        "import": "./dist/geometry.d.mts",
+        "require": "./dist/geometry.d.cts"
+      },
+      "import": "./dist/geometry.mjs",
+      "require": "./dist/geometry.cjs"
+    },
+    "./hash": {
+      "types": {
+        "import": "./dist/hash.d.mts",
+        "require": "./dist/hash.d.cts"
+      },
+      "import": "./dist/hash.mjs",
+      "require": "./dist/hash.cjs"
+    },
+    "./nanoid": {
+      "types": {
+        "import": "./dist/nanoid.d.mts",
+        "require": "./dist/nanoid.d.cts"
+      },
+      "import": "./dist/nanoid.mjs",
+      "require": "./dist/nanoid.cjs"
+    },
+    "./secure": {
+      "types": {
+        "import": "./dist/secure.d.mts",
+        "require": "./dist/secure.d.cts"
+      },
+      "import": "./dist/secure.mjs",
+      "require": "./dist/secure.cjs"
+    },
+    "./time": {
+      "types": {
+        "import": "./dist/time.d.mts",
+        "require": "./dist/time.d.cts"
+      },
+      "import": "./dist/time.mjs",
+      "require": "./dist/time.cjs"
+    },
+    "./token": {
+      "types": {
+        "import": "./dist/token.d.mts",
+        "require": "./dist/token.d.cts"
+      },
+      "import": "./dist/token.mjs",
+      "require": "./dist/token.cjs"
+    },
+    "./ulid": {
+      "types": {
+        "import": "./dist/ulid.d.mts",
+        "require": "./dist/ulid.d.cts"
+      },
+      "import": "./dist/ulid.mjs",
+      "require": "./dist/ulid.cjs"
+    },
+    "./unicode": {
+      "types": {
+        "import": "./dist/unicode.d.mts",
+        "require": "./dist/unicode.d.cts"
+      },
+      "import": "./dist/unicode.mjs",
+      "require": "./dist/unicode.cjs"
+    },
+    "./uuid": {
+      "types": {
+        "import": "./dist/uuid.d.mts",
+        "require": "./dist/uuid.d.cts"
+      },
+      "import": "./dist/uuid.mjs",
+      "require": "./dist/uuid.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "engines": {
-    "node": ">=22"
+    "node": ">=18"
   },
   "scripts": {
-    "setup": "node scripts/setup.js",
-    "build": "tsdown",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "build": "npm run sync:exports && tsdown",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "format": "biome format --write",
-    "format:check": "biome format",
-    "lint": "biome lint",
-    "lint:fix": "biome lint --write",
-    "check": "biome check --write",
-    "ci": "biome ci",
-    "prepublishOnly": "npm run build"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "check": "prettier --write . && eslint --fix .",
+    "ci": "prettier --check . && eslint .",
+    "smoke": "node scripts/smoke.mjs",
+    "prepublishOnly": "npm run build",
+    "sync:exports": "node scripts/sync-exports.mjs",
+    "check:exports": "node scripts/sync-exports.mjs --check",
+    "check:types": "attw --pack .",
+    "dev": "pnpm --filter ransu-docs dev",
+    "docs": "pnpm --filter ransu-docs dev",
+    "docs:build": "pnpm --filter ransu-docs build && node scripts/prune-docs-assets.mjs",
+    "docs:deploy": "pnpm --filter ransu-docs exec wrangler deploy",
+    "bench": "node scripts/bench.mjs",
+    "test:stat": "vitest run --project statistical",
+    "test:all": "vitest run",
+    "check:examples": "node scripts/check-examples.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.9",
-    "@types/node": "^22.20.1",
-    "@vitest/coverage-v8": "^4.1.11",
-    "tsdown": "^0.22.14",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "@arethetypeswrong/cli": "catalog:",
+    "@eslint/js": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "prettier-plugin-astro": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "vitest": "catalog:"
+  },
+  "packageManager": "pnpm@11.22.0",
+  "typesVersions": {
+    "*": {
+      "color": [
+        "./dist/color.d.cts"
+      ],
+      "compat": [
+        "./dist/compat.d.cts"
+      ],
+      "dice": [
+        "./dist/dice.d.cts"
+      ],
+      "distribution": [
+        "./dist/distribution.d.cts"
+      ],
+      "engine": [
+        "./dist/engine.d.cts"
+      ],
+      "geometry": [
+        "./dist/geometry.d.cts"
+      ],
+      "hash": [
+        "./dist/hash.d.cts"
+      ],
+      "nanoid": [
+        "./dist/nanoid.d.cts"
+      ],
+      "secure": [
+        "./dist/secure.d.cts"
+      ],
+      "time": [
+        "./dist/time.d.cts"
+      ],
+      "token": [
+        "./dist/token.d.cts"
+      ],
+      "ulid": [
+        "./dist/ulid.d.cts"
+      ],
+      "unicode": [
+        "./dist/unicode.d.cts"
+      ],
+      "uuid": [
+        "./dist/uuid.d.cts"
+      ]
+    }
   }
 }

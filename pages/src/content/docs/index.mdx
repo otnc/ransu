@@ -1,0 +1,51 @@
+---
+title: ransu
+description: Convenient and easy-to-use random functions for JavaScript and TypeScript.
+template: splash
+hero:
+  tagline: |
+    Every random function you needed, in one package. Synchronous, zero
+    dependencies, and correct where Math.random is not.
+  actions:
+    - text: Get started
+      link: /start/introduction/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/otnc/ransu
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Code } from "@astrojs/starlight/components";
+
+<Code
+  lang="ts"
+  code={`import ransu from 'ransu'
+
+ransu.random() // 0.7263… — a Math.random() drop-in
+ransu.integer(1, 6) // 4 — both ends included
+ransu.pick(['🍎', '🍊']) // '🍊'
+ransu.shuffle(deck) // a new array; the input is untouched
+ransu.uuid.v7() // '01997a2c-…' — sortable by time
+ransu.normal(170, 6) // 168.42…`}
+/>
+
+<CardGrid stagger>
+  <Card title="Unbiased by construction" icon="approve-check">
+    `Math.floor(Math.random() * n)` is subtly non-uniform for most `n`. Every
+    bounded integer here uses Lemire's nearly-divisionless method, and anything
+    wider than 2^53 is refused rather than silently rounded.
+  </Card>
+  <Card title="Reproducible" icon="seti:clock">
+    Nine engines, `getState` / `setState` / `clone` / `split`, and a stream that
+    stays identical across versions, runtimes and module systems.
+  </Card>
+  <Card title="Never asynchronous" icon="rocket">
+    No API returns a Promise — not even UUID v5, which needs a hash. That is a
+    contract, checked in CI.
+  </Card>
+  <Card title="Runs everywhere" icon="puzzle">
+    Node, Deno, Bun, browsers, Cloudflare Workers, Vercel Edge. Zero
+    dependencies and no static import of any Node built-in.
+  </Card>
+</CardGrid>
