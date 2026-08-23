@@ -184,6 +184,7 @@
     "sync:exports": "node scripts/sync-exports.mjs",
     "check:exports": "node scripts/sync-exports.mjs --check",
     "check:types": "attw --pack .",
+    "dev": "pnpm --filter ransu-docs dev",
     "docs": "pnpm --filter ransu-docs dev",
     "docs:build": "pnpm --filter ransu-docs build && node scripts/prune-docs-assets.mjs",
     "docs:deploy": "pnpm docs:build && pnpm --filter ransu-docs exec wrangler deploy",
