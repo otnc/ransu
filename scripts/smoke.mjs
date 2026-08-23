@@ -43,8 +43,8 @@ check("esm: named exports are also namespace properties", () => {
   assert.equal(ransu.default, ransu);
 });
 
-const engineModule = await import("ransu/engines");
-check("esm: ransu/engines", () => {
+const engineModule = await import("ransu/engine");
+check("esm: ransu/engine", () => {
   const engine = engineModule.xoshiro128pp(1);
   assert.equal(typeof engine.nextUint32(), "number");
   assert.equal(engine.algorithm, "xoshiro128++");
@@ -74,15 +74,12 @@ check("esm: ransu/token", () => {
 
 const unicodeModule = await import("ransu/unicode");
 check("esm: ransu/unicode", () => {
-  assert.equal(
-    [...unicodeModule.unicodeString(5, { blocks: "emoji" })].length,
-    5
-  );
+  assert.equal([...unicodeModule.chars(5, { blocks: "emoji" })].length, 5);
   assert.equal([...unicodeModule.char({ blocks: "kana" })].length, 1);
 });
 
-const distModule = await import("ransu/distributions");
-check("esm: ransu/distributions", () => {
+const distModule = await import("ransu/distribution");
+check("esm: ransu/distribution", () => {
   const sampler = distModule.normal({ mean: 5, sd: 1 });
   assert.equal(typeof sampler.sample(), "number");
   assert.equal(sampler.samples(4).length, 4);
@@ -100,6 +97,27 @@ const secureModule = await import("ransu/secure");
 check("esm: ransu/secure", () => {
   assert.ok([1, 2, 3].includes(secureModule.integer(1, 3)));
   assert.throws(() => secureModule.seed(), /cannot be seeded/);
+});
+
+const diceModule = await import("ransu/dice");
+check("esm: ransu/dice", () => {
+  const total = diceModule.dice("3d6+2");
+  assert.ok(total >= 5 && total <= 20);
+  assert.equal(diceModule.dice.detail("4d6").dice.length, 4);
+});
+
+const geometryModule = await import("ransu/geometry");
+check("esm: ransu/geometry", () => {
+  const [x, y] = geometryModule.inCircle(1);
+  assert.ok(Math.hypot(x, y) <= 1);
+  assert.equal(geometryModule.unitVector(3).length, 3);
+});
+
+const colorModule = await import("ransu/color");
+check("esm: ransu/color", () => {
+  assert.match(colorModule.color(), /^#[0-9a-f]{6}$/);
+  assert.match(colorModule.color({ alpha: true }), /^#[0-9a-f]{8}$/);
+  assert.equal(colorModule.rgb().length, 4);
 });
 
 const timeModule = await import("ransu/time");
@@ -137,13 +155,16 @@ check("cjs: .default still resolves, for interop shims", () => {
 });
 
 for (const subpath of [
-  "ransu/engines",
-  "ransu/distributions",
+  "ransu/engine",
+  "ransu/distribution",
   "ransu/uuid",
   "ransu/nanoid",
   "ransu/ulid",
   "ransu/token",
   "ransu/unicode",
+  "ransu/dice",
+  "ransu/geometry",
+  "ransu/color",
   "ransu/time",
   "ransu/hash",
   "ransu/secure",

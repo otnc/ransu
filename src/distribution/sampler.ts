@@ -1,4 +1,4 @@
-import type { EngineLike } from "../engines/types";
+import type { EngineLike } from "../engine/types";
 import { globalSource } from "../global/instance";
 import { assertLength } from "../internal/assert";
 import { type Source, sourceFor } from "../internal/source";

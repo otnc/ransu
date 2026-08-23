@@ -23,7 +23,7 @@
     "csprng",
     "typescript"
   ],
-  "homepage": "https://github.com/otnc/ransu#readme",
+  "homepage": "https://ransu.otnc.dev/",
   "bugs": {
     "url": "https://github.com/otnc/ransu/issues"
   },
@@ -47,6 +47,14 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./color": {
+      "types": {
+        "import": "./dist/color.d.mts",
+        "require": "./dist/color.d.cts"
+      },
+      "import": "./dist/color.mjs",
+      "require": "./dist/color.cjs"
+    },
     "./compat": {
       "types": {
         "import": "./dist/compat.d.mts",
@@ -55,21 +63,37 @@
       "import": "./dist/compat.mjs",
       "require": "./dist/compat.cjs"
     },
-    "./distributions": {
+    "./dice": {
       "types": {
-        "import": "./dist/distributions.d.mts",
-        "require": "./dist/distributions.d.cts"
+        "import": "./dist/dice.d.mts",
+        "require": "./dist/dice.d.cts"
       },
-      "import": "./dist/distributions.mjs",
-      "require": "./dist/distributions.cjs"
+      "import": "./dist/dice.mjs",
+      "require": "./dist/dice.cjs"
     },
-    "./engines": {
+    "./distribution": {
       "types": {
-        "import": "./dist/engines.d.mts",
-        "require": "./dist/engines.d.cts"
+        "import": "./dist/distribution.d.mts",
+        "require": "./dist/distribution.d.cts"
       },
-      "import": "./dist/engines.mjs",
-      "require": "./dist/engines.cjs"
+      "import": "./dist/distribution.mjs",
+      "require": "./dist/distribution.cjs"
+    },
+    "./engine": {
+      "types": {
+        "import": "./dist/engine.d.mts",
+        "require": "./dist/engine.d.cts"
+      },
+      "import": "./dist/engine.mjs",
+      "require": "./dist/engine.cjs"
+    },
+    "./geometry": {
+      "types": {
+        "import": "./dist/geometry.d.mts",
+        "require": "./dist/geometry.d.cts"
+      },
+      "import": "./dist/geometry.mjs",
+      "require": "./dist/geometry.cjs"
     },
     "./hash": {
       "types": {
