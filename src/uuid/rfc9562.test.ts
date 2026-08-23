@@ -138,6 +138,11 @@ describe("RFC 9562 5.1 version 1", () => {
     const bytes = uuid.parse(uuid.v1());
     expect(bytes[8] & 0xc0).toBe(0x80);
   });
+
+  it("rejects a now that does not fit in the 60-bit field", () => {
+    expect(() => uuid.v1({ now: 2 ** 55 })).toThrow(/within \[0,/);
+    expect(() => uuid.v1({ now: -1 })).toThrow(/within \[0,/);
+  });
 });
 
 describe("RFC 9562 5.6 version 6", () => {
@@ -194,6 +199,14 @@ describe("RFC 9562 5.7 version 7", () => {
       uuid.v7({ now: start + offset })
     );
     expect([...ids].sort()).toEqual(ids);
+  });
+
+  it("rejects a now that does not fit in 48 bits", () => {
+    // Passing epoch nanoseconds or microseconds where milliseconds were
+    // expected lands exactly here: a number so large it silently wraps
+    // instead of erroring, and the UUID would carry the wrong instant.
+    expect(() => uuid.v7({ now: 2 ** 48 })).toThrow(/within \[0,/);
+    expect(() => uuid.v7({ now: -1 })).toThrow(/within \[0,/);
   });
 });
 

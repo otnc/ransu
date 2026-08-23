@@ -96,7 +96,7 @@ const AMBIGUOUS = new Set("0O1lI|`");
  * ```ts
  * password();            // "vK8mQ2xL9pT4nR7c"
  * password(24, { symbols: true, requireEach: true });
- * password(12, { uppercase: false, symbols: false });
+ * password(12, { upper: false, symbols: false });
  * ```
  */
 export function password(length = 16, options: PasswordOptions = {}): string {

@@ -10,6 +10,7 @@ coverage/
 pages/dist/
 pages/.astro/
 pages/.wrangler/
+scripts/.examples-typecheck.ts
 
 # Generated from TSDoc by starlight-typedoc during the docs build.
 pages/src/content/docs/api/
