@@ -67,8 +67,9 @@ function subtract(
 }
 
 /**
- * A precomputed set of code points to draw from. Build one when the same
- * options are reused; the standalone functions build a fresh set per call.
+ * A precomputed set of code points to draw from. The standalone functions
+ * resolve and cache one of these per distinct set of options, so build one
+ * yourself only to hold onto it explicitly or to use `at` and `size`.
  */
 export class CodePointSet {
   readonly ranges: readonly CodePointRange[];
