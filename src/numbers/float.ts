@@ -18,8 +18,3 @@ export function float(src: Source, min?: number, max?: number): number {
 
   return from + src.f64() * (to - from);
 }
-
-/** A uniform double in `[0, 1)` from 24 bits: one word instead of two. */
-export function float32(src: Source): number {
-  return (src.u32() >>> 8) / 0x1000000;
-}

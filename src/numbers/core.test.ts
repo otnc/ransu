@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { xoshiro128pp } from "../engines/xoshiro128pp";
+import { xoshiro128pp } from "../engine/xoshiro128pp";
 import { RansuError } from "../internal/errors";
 import { createSource } from "../internal/source";
 import { randomBigInt } from "./bigint";
 import { bigBits, bits } from "./bits";
-import { bool, oneIn, sign } from "./bool";
+import { bool, chance, oneIn, sign } from "./bool";
 import { bytes, floats, integers } from "./bytes";
-import { float, float32, random } from "./float";
+import { float, random } from "./float";
 import { below, integer, range } from "./integer";
 
 const src = () => createSource(xoshiro128pp(20260821));
@@ -45,15 +45,6 @@ describe("random / float", () => {
       const value = float(s, 5);
       expect(value).toBeGreaterThanOrEqual(0);
       expect(value).toBeLessThan(5);
-    }
-  });
-
-  it("float32 stays within [0, 1)", () => {
-    const s = src();
-    for (let i = 0; i < 5_000; i++) {
-      const value = float32(s);
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThan(1);
     }
   });
 
@@ -250,18 +241,18 @@ describe("bool and friends", () => {
   it("honours a probability", () => {
     const s = src();
     let trues = 0;
-    for (let i = 0; i < 100_000; i++) if (bool(s, 0.25)) trues++;
+    for (let i = 0; i < 100_000; i++) if (chance(s, 0.25)) trues++;
     expect(trues).toBeGreaterThan(24_000);
     expect(trues).toBeLessThan(26_000);
   });
 
   it("short-circuits the certain cases", () => {
-    expect(bool(src(), 0)).toBe(false);
-    expect(bool(src(), 1)).toBe(true);
+    expect(chance(src(), 0)).toBe(false);
+    expect(chance(src(), 1)).toBe(true);
   });
 
   it("rejects probabilities outside [0, 1]", () => {
-    expect(() => bool(src(), 1.5)).toThrow(RansuError);
+    expect(() => chance(src(), 1.5)).toThrow(RansuError);
   });
 
   it("oneIn(4) is true about a quarter of the time", () => {
