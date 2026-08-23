@@ -6,7 +6,7 @@ export default defineConfig({
   // Static output: the docs are pages, not an application. Cloudflare serves
   // them from Workers static assets, so there is no server to run.
   output: "static",
-  site: "https://ransu.dev",
+  site: "https://ransu.otnc.dev",
   integrations: [
     starlight({
       // The API reference is generated from the TSDoc comments in src/, so the
@@ -15,13 +15,16 @@ export default defineConfig({
         starlightTypeDoc({
           entryPoints: [
             "../src/index.ts",
-            "../src/engines/index.ts",
-            "../src/distributions/index.ts",
+            "../src/engine/index.ts",
+            "../src/distribution/index.ts",
             "../src/uuid/index.ts",
             "../src/unicode/index.ts",
             "../src/nanoid.ts",
             "../src/ulid.ts",
             "../src/token.ts",
+            "../src/dice.ts",
+            "../src/geometry.ts",
+            "../src/color.ts",
             "../src/time.ts",
             "../src/hash.ts",
             "../src/secure.ts",
@@ -74,6 +77,10 @@ export default defineConfig({
             { label: "Distributions", slug: "guides/distributions" },
             { label: "Reproducibility", slug: "guides/reproducibility" },
             { label: "Security", slug: "guides/security" },
+            {
+              label: "Dice, shapes and colours",
+              slug: "guides/dice-and-shapes",
+            },
             { label: "Retries and scheduling", slug: "guides/retries" },
             { label: "Per-key randomness", slug: "guides/per-key" },
           ],
@@ -82,6 +89,7 @@ export default defineConfig({
           label: "Reference",
           items: [
             { label: "Subpaths", slug: "reference/subpaths" },
+            { label: "Naming", slug: "reference/naming" },
             { label: "Engines", slug: "reference/engines" },
             { label: "Errors", slug: "reference/errors" },
             { label: "Runtimes", slug: "reference/runtimes" },

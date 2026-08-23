@@ -72,6 +72,36 @@ pnpm ci && pnpm typecheck && pnpm test:all && pnpm build && pnpm smoke
   an alias for an existing name.
 - **Type-only imports use `import type`** (`verbatimModuleSyntax` is on).
 
+## Naming
+
+Four rules. Every public name follows them, and a name that does not is a bug.
+
+**1. A name says what you get, or what you do.** A generator is named for its
+value (`integer`, `float`, `bytes`, `color`, `char`, `uuid`); an operation on a
+collection you supply is named for the action (`pick`, `sample`, `shuffle`).
+Singular returns one, plural returns many: `float`/`floats`, `char`/`chars`.
+
+**2. A name reads as English.** Say it out loud with the qualifier attached and
+the word order follows: "weighted pick", "pick index", "shuffle in place",
+"hash integer", "past date". Whichever order is English is the one to write.
+A bare adjective is not a name: `weighted()` gave no hint that it returned a
+single item, which is why it is now `weightedPick()`.
+
+**3. Follow the prevailing vocabulary before inventing one.** Where Python's
+`random`, lodash or the RFCs already have a word for this, use their word:
+`shuffle`, `sample`, `choices`, `reservoir`, `uuid.v7`. A reader who knows one
+of those should not have to learn a second name for the same idea.
+
+**4. Short wins, but never by abbreviating.** Prefer the shorter name when both
+are understandable; `int`, `rdm` and `str` are not names. Never rename
+something to a longer name unless doing so removes a banned abbreviation
+(`hashInt` to `hashInteger`) or completes a pair (`angle`/`angleDegrees`,
+`pastDate`/`futureDate`, `onSphere`/`inSphere`).
+
+Two names must never overlap. `bool()` is the fair coin and `chance(p)` is the
+weighted one; while `bool(p)` also took a probability the two were one function
+under two names, which the "one name per function" rule above already forbids.
+
 ## Adding a subpath
 
 `exports` has to live in package.json because Node reads nothing else, but it
