@@ -10,11 +10,9 @@ export {
   type ExponentialOptions,
   exponential,
   type FOptions,
-  f,
   f as fisherF,
   type GammaOptions,
   gamma,
-  gaussian,
   gumbel,
   type IrwinHallOptions,
   irwinHall,
@@ -61,6 +59,4 @@ export {
   type ZipfOptions,
   zipf,
 } from "./discrete";
-export { binomialLogPmf, logGamma } from "./gamma-function";
 export type { DistributionOptions, NumberSampler, Sampler } from "./sampler";
-export { standardExponential, standardGamma, standardNormal } from "./ziggurat";

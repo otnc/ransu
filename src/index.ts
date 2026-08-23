@@ -1,5 +1,4 @@
 export type { Collection } from "./collections/pick";
-export { AliasTable } from "./collections/weighted";
 export type {
   Engine,
   EngineFactory,

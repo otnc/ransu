@@ -1,8 +1,18 @@
 import type { Engine, EngineLike } from "./types";
 
 /**
- * Adapts a plain `() => number` in `[0, 1)` into an {@link Engine}, so that
- * `Math.random`, `seedrandom` and the like work with every ransu API.
+ * Wraps a plain `() => number` in `[0, 1)` as an engine.
+ *
+ * Anywhere an engine is accepted, a bare function is accepted too and
+ * wrapped for you; this is what does the wrapping.
+ *
+ * @example
+ * ```ts
+ * import { Random } from "ransu";
+ *
+ * // The function is adopted automatically.
+ * new Random(() => Math.random()).integer(1, 6); // 4
+ * ```
  */
 export class FunctionEngine implements Engine {
   readonly algorithm = "function";

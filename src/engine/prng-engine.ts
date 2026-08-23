@@ -24,8 +24,20 @@ export function ensureNonZero(state: Uint32Array): Uint32Array {
 }
 
 /**
- * Shared machinery for the seedable engines. Each one keeps its whole state in
- * a single `Uint32Array`, so state handling is uniform across algorithms.
+ * The base class the seedable engines share.
+ *
+ * It provides seeding, state save and restore, and the byte and float paths
+ * built on `nextUint32`. Subclass it to add an algorithm of your own; a
+ * subclass implements the state layout and one step of the generator.
+ *
+ * @example
+ * ```ts
+ * xoshiro128pp(42) instanceof PrngEngine; // true
+ * pcg32(42) instanceof PrngEngine;        // true
+ *
+ * // Not seedable, so not one of these.
+ * cryptoRandom instanceof PrngEngine;     // false
+ * ```
  */
 export abstract class PrngEngine implements Engine {
   abstract readonly algorithm: string;

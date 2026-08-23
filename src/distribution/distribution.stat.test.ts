@@ -13,7 +13,7 @@ import {
   dirichlet,
   discreteUniform,
   exponential,
-  f,
+  fisherF,
   gamma,
   geometric,
   gumbel,
@@ -242,8 +242,8 @@ describe("beta, chi-squared, t and F", () => {
     expect(variance / sampler.variance).toBeCloseTo(1, 0);
   });
 
-  it("f is positive and centred near its mean", () => {
-    const sampler = f({ d1: 8, d2: 12, engine: engine() });
+  it("fisherF is positive and centred near its mean", () => {
+    const sampler = fisherF({ d1: 8, d2: 12, engine: engine() });
     const values = sampler.samples(40_000);
     expect(Array.prototype.every.call(values, (value) => value > 0)).toBe(true);
     expect(moments(values).mean / sampler.mean).toBeCloseTo(1, 1);

@@ -51,7 +51,23 @@ export function weightedPick<T>(
   return list[list.length - 1];
 }
 
-/** Vose's alias method: O(n) to build, O(1) per draw. */
+/**
+ * Vose's alias method: weighted draws in constant time. Internal: `pick` takes
+ * a `Source`, so reach it through {@link weightedTable} or `Random#weightedTable`.
+ *
+ * Building the table is O(n) and each draw is O(1), so it wins over a linear
+ * scan as soon as the same weights are drawn from more than a handful of
+ * times. {@link weightedTable} builds one bound to the global stream, which
+ * is usually what you want.
+ *
+ * @example
+ * ```ts
+ * import { weightedTable } from "ransu";
+ *
+ * const loot = weightedTable(["common", "rare", "epic"], [90, 9, 1]);
+ * loot.pick(); // "common"
+ * ```
+ */
 export class AliasTable<T> {
   private readonly items: ArrayLike<T>;
   private readonly probability: Float64Array;
