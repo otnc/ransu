@@ -188,6 +188,7 @@
     "docs": "pnpm --filter ransu-docs dev",
     "docs:build": "pnpm --filter ransu-docs build && node scripts/prune-docs-assets.mjs",
     "docs:deploy": "pnpm --filter ransu-docs exec wrangler deploy",
+    "docs:version": "pnpm --filter ransu-docs exec wrangler versions upload",
     "bench": "node scripts/bench.mjs",
     "test:stat": "vitest run --project statistical",
     "test:all": "vitest run",
