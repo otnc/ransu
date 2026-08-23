@@ -1,6 +1,6 @@
-import { cryptoRandom } from "../engines/crypto";
-import { toEngine } from "../engines/function-engine";
-import type { Engine, EngineLike } from "../engines/types";
+import { cryptoRandom } from "../engine/crypto";
+import { toEngine } from "../engine/function-engine";
+import type { Engine, EngineLike } from "../engine/types";
 
 /**
  * An engine behind a stable object.

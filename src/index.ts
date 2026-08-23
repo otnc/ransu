@@ -5,8 +5,11 @@ export type {
   EngineFactory,
   EngineLike,
   EngineState,
-} from "./engines/types";
+} from "./engine/types";
 export * from "./global/index";
+export * from "./color";
+export * from "./dice";
+export * from "./geometry";
 export * from "./hash";
 export { RansuError, type RansuErrorCode } from "./internal/errors";
 export {
@@ -28,7 +31,7 @@ export {
   type TokenOptions,
   token,
 } from "./token";
-export { type UlidOptions, ulid, ulidTimestamp } from "./ulid";
+export { type UlidApi, type UlidOptions, ulid } from "./ulid";
 export {
   type CodePointRange,
   type UnicodeBlock,

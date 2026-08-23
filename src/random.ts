@@ -5,40 +5,42 @@ import {
   pickEntry,
   pickIndex,
   pickKey,
+  pickValue,
+  subset,
   tryPick,
 } from "./collections/pick";
 import { combination, reservoir, sample, takeOut } from "./collections/sample";
 import {
-  partialShuffle,
   permutation,
   shuffle,
   shuffleInPlace,
   shuffleString,
 } from "./collections/shuffle";
-import { AliasTable, weighted, weightedSample } from "./collections/weighted";
+import {
+  AliasTable,
+  weightedPick,
+  weightedSample,
+} from "./collections/weighted";
 import type {
   Engine,
   EngineFactory,
   EngineLike,
   EngineState,
-} from "./engines/types";
-import { xoshiro128pp } from "./engines/xoshiro128pp";
+} from "./engine/types";
+import { xoshiro128pp } from "./engine/xoshiro128pp";
 import { raise } from "./internal/errors";
 import { createSource, type Source } from "./internal/source";
 import { randomBigInt } from "./numbers/bigint";
 import { bigBits, bits } from "./numbers/bits";
+import { sampleIntegers } from "./numbers/distinct";
 import { bool, chance, oneIn, sign } from "./numbers/bool";
 import { bytes, fillBytes, floats, integers } from "./numbers/bytes";
-import { float, float32, random } from "./numbers/float";
+import { float, random } from "./numbers/float";
 import { below, integer, range } from "./numbers/integer";
 import type { Seed } from "./seed/sequence";
 import { randomHex, randomString } from "./strings/random-string";
 import type { CodePointSet, UnicodeOptions } from "./unicode/code-point-set";
-import {
-  randomChar,
-  randomCodePoint,
-  randomUnicodeString,
-} from "./unicode/draw";
+import { randomChar, randomCodePoint, randomChars } from "./unicode/draw";
 
 export interface RandomOptions {
   /**
@@ -168,11 +170,6 @@ export class Random {
     return float(this.#src, min, max);
   }
 
-  /** A double in `[0, 1)` from a single word — cheaper, 24 bits. */
-  float32(): number {
-    return float32(this.#src);
-  }
-
   /** An integer in `[min, max]` — **both ends included**. */
   integer(min: number, max: number): number {
     return integer(this.#src, min, max);
@@ -193,9 +190,9 @@ export class Random {
     return randomBigInt(this.#src, min, max);
   }
 
-  /** `true` with probability `p` (default 0.5). */
-  bool(p?: number): boolean {
-    return bool(this.#src, p);
+  /** `true` or `false`, evenly. */
+  bool(): boolean {
+    return bool(this.#src);
   }
 
   chance(p: number): boolean {
@@ -273,6 +270,23 @@ export class Random {
     return pickEntry(this.#src, target);
   }
 
+  /** One value of a plain object or `Map`. */
+  pickValue<K extends string | number | symbol, V>(
+    target: Record<K, V> | Map<K, V>
+  ): V {
+    return pickValue(this.#src, target);
+  }
+
+  /** Each element kept independently with probability `p`. */
+  subset<T>(items: Collection<T>, p: number): T[] {
+    return subset(this.#src, items, p);
+  }
+
+  /** `count` distinct integers in `[min, max]`, without building the range. */
+  sampleIntegers(count: number, min: number, max: number): number[] {
+    return sampleIntegers(this.#src, count, min, max);
+  }
+
   /** `k` elements **with** replacement. */
   choices<T>(items: Collection<T>, k: number): T[] {
     return choices(this.#src, items, k);
@@ -293,7 +307,7 @@ export class Random {
     return takeOut(this.#src, items);
   }
 
-  /** `k` distinct elements, weighted. */
+  /** `k` distinct elements, weightedPick. */
   weightedSample<T>(
     items: Collection<T>,
     weights: ArrayLike<number>,
@@ -317,11 +331,6 @@ export class Random {
     return shuffleInPlace(this.#src, items);
   }
 
-  /** Only the first `k` elements are settled: `O(k)` instead of `O(n)`. */
-  partialShuffle<T>(items: Collection<T>, k: number): T[] {
-    return partialShuffle(this.#src, items, k);
-  }
-
   permutation(n: number): number[] {
     return permutation(this.#src, n);
   }
@@ -331,12 +340,12 @@ export class Random {
   }
 
   /** One element, with probability proportional to its weight. */
-  weighted<T>(items: Collection<T>, weights: ArrayLike<number>): T {
-    return weighted(this.#src, items, weights);
+  weightedPick<T>(items: Collection<T>, weights: ArrayLike<number>): T {
+    return weightedPick(this.#src, items, weights);
   }
 
   /**
-   * A reusable weighted sampler, O(1) per draw. Build it once when the same
+   * A reusable weightedPick sampler, O(1) per draw. Build it once when the same
    * weights are sampled repeatedly.
    */
   weightedTable<T>(
@@ -371,10 +380,7 @@ export class Random {
   }
 
   /** A random string of `length` code points, not UTF-16 units. */
-  unicodeString(
-    length: number,
-    options?: UnicodeOptions | CodePointSet
-  ): string {
-    return randomUnicodeString(this.#src, length, options);
+  chars(length: number, options?: UnicodeOptions | CodePointSet): string {
+    return randomChars(this.#src, length, options);
   }
 }

@@ -1,6 +1,6 @@
 import * as collections from "./collections/index";
 import type { Collection } from "./collections/pick";
-import { cryptoRandom } from "./engines/crypto";
+import { cryptoRandom } from "./engine/crypto";
 import { raise } from "./internal/errors";
 import { sourceFor } from "./internal/source";
 import * as core from "./numbers/index";
@@ -46,8 +46,8 @@ export function bigint(min: bigint, max: bigint): bigint {
   return core.randomBigInt(src(), min, max);
 }
 
-export function bool(p?: number): boolean {
-  return core.bool(src(), p);
+export function bool(): boolean {
+  return core.bool(src());
 }
 
 export function chance(p: number): boolean {
@@ -103,11 +103,11 @@ export function permutation(n: number): number[] {
   return collections.permutation(src(), n);
 }
 
-export function weighted<T>(
+export function weightedPick<T>(
   items: Collection<T>,
   weights: ArrayLike<number>
 ): T {
-  return collections.weighted(src(), items, weights);
+  return collections.weightedPick(src(), items, weights);
 }
 
 export function string(

@@ -6,14 +6,10 @@ export {
   pickEntry,
   pickIndex,
   pickKey,
+  pickValue,
+  subset,
   tryPick,
 } from "./pick";
 export { combination, reservoir, sample, takeOut } from "./sample";
-export {
-  partialShuffle,
-  permutation,
-  shuffle,
-  shuffleInPlace,
-  shuffleString,
-} from "./shuffle";
-export { AliasTable, weighted, weightedSample } from "./weighted";
+export { permutation, shuffle, shuffleInPlace, shuffleString } from "./shuffle";
+export { AliasTable, weightedPick, weightedSample } from "./weighted";

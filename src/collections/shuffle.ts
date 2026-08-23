@@ -22,29 +22,6 @@ export function shuffle<T>(src: Source, items: Collection<T>): T[] {
   return shuffleInPlace(src, out);
 }
 
-/** Settle only the first `k` elements: `O(k)` rather than `O(n)`. */
-export function partialShuffle<T>(
-  src: Source,
-  items: Collection<T>,
-  k: number
-): T[] {
-  const list = asIndexable(items);
-  assertLength(k, "k");
-  const n = list.length;
-  const limit = Math.min(k, n);
-
-  const out = new Array<T>(n);
-  for (let i = 0; i < n; i++) out[i] = list[i];
-
-  for (let i = 0; i < limit; i++) {
-    const j = i + bounded(src, n - i);
-    const tmp = out[i];
-    out[i] = out[j];
-    out[j] = tmp;
-  }
-  return out.slice(0, limit);
-}
-
 /** A uniformly random permutation of `0 .. n-1`. */
 export function permutation(src: Source, n: number): number[] {
   assertLength(n, "n");

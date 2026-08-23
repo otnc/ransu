@@ -32,7 +32,7 @@ function validate(weights: ArrayLike<number>, length: number): number {
  * One element, with probability proportional to its weight. A single linear
  * pass, no allocation. For repeated draws build an {@link AliasTable} instead.
  */
-export function weighted<T>(
+export function weightedPick<T>(
   src: Source,
   items: Collection<T>,
   weights: ArrayLike<number>

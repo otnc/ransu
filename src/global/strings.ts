@@ -27,9 +27,9 @@ export function char(options?: UnicodeOptions | CodePointSet): string {
 }
 
 /** A random string of `length` code points, not UTF-16 units. */
-export function unicodeString(
+export function chars(
   length: number,
   options?: UnicodeOptions | CodePointSet
 ): string {
-  return draw.randomUnicodeString(globalSource(), length, options);
+  return draw.randomChars(globalSource(), length, options);
 }

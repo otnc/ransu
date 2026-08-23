@@ -1,8 +1,11 @@
 import { AliasTable } from "../collections/weighted";
-import * as distributions from "../distributions/index";
-import { engines } from "../engines/index";
+import * as distributions from "../distribution/index";
+import { engines } from "../engine/index";
 import * as fn from "../global/index";
 import { globalSource } from "../global/instance";
+import * as color from "../color";
+import * as dice from "../dice";
+import * as geometry from "../geometry";
 import * as hash from "../hash";
 import { RansuError } from "../internal/errors";
 import { nanoid } from "../nanoid";
@@ -12,7 +15,7 @@ import { alphabets } from "../strings/alphabet";
 import { graphemes } from "../strings/random-string";
 import * as time from "../time";
 import { otp, password, token } from "../token";
-import { ulid, ulidTimestamp } from "../ulid";
+import { ulid } from "../ulid";
 import { unicodeRanges } from "../unicode/blocks";
 import { CodePointSet } from "../unicode/code-point-set";
 import { uuid } from "../uuid/index";
@@ -28,12 +31,14 @@ const api = {
   ...fn,
   ...time,
   ...hash,
+  ...dice,
+  ...geometry,
+  ...color,
 
   // identifiers and text
   uuid,
   nanoid,
   ulid,
-  ulidTimestamp,
   token,
   otp,
   password,
@@ -92,4 +97,4 @@ export const ransu: RansuApi = /* @__PURE__ */ (() => {
   return target;
 })();
 
-export { engines } from "../engines/index";
+export { engines } from "../engine/index";

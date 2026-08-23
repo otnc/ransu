@@ -11,11 +11,6 @@ export function float(min?: number, max?: number): number {
   return core.float(globalSource(), min, max);
 }
 
-/** A double in `[0, 1)` from a single word: 24 bits instead of 53. */
-export function float32(): number {
-  return core.float32(globalSource());
-}
-
 /** An integer in `[min, max]`, both ends included. */
 export function integer(min: number, max: number): number {
   return core.integer(globalSource(), min, max);
@@ -36,12 +31,12 @@ export function bigint(min: bigint, max: bigint): bigint {
   return core.randomBigInt(globalSource(), min, max);
 }
 
-/** `true` with probability `p` (default 0.5). */
-export function bool(p?: number): boolean {
-  return core.bool(globalSource(), p);
+/** `true` or `false`, evenly. */
+export function bool(): boolean {
+  return core.bool(globalSource());
 }
 
-/** `true` with probability `p`. Reads better inside an `if`. */
+/** `true` with probability `p`. */
 export function chance(p: number): boolean {
   return core.chance(globalSource(), p);
 }
@@ -88,4 +83,13 @@ export function integers(n: number, min: number, max: number): Float64Array {
 /** An endless stream of doubles in `[0, 1)`. */
 export function* stream(): Generator<number, never, unknown> {
   for (;;) yield core.random(globalSource());
+}
+
+/** `count` distinct integers in `[min, max]`, without materialising the range. */
+export function sampleIntegers(
+  count: number,
+  min: number,
+  max: number
+): number[] {
+  return core.sampleIntegers(globalSource(), count, min, max);
 }

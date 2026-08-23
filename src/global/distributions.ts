@@ -1,14 +1,14 @@
-import * as c from "../distributions/continuous/index";
-import * as d from "../distributions/discrete/index";
+import * as c from "../distribution/continuous/index";
+import * as d from "../distribution/discrete/index";
 import {
   standardExponential,
   standardGamma,
   standardNormal,
-} from "../distributions/ziggurat";
+} from "../distribution/ziggurat";
 import { globalSource } from "./instance";
 
 // One-shot draws from the global stream, with positional arguments. The
-// factories in `ransu/distributions` take an options object and return a
+// factories in `ransu/distribution` take an options object and return a
 // reusable sampler; reach for those when drawing more than once.
 
 /** One Gaussian draw. */

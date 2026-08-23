@@ -1,17 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { xoshiro128pp } from "../engines/xoshiro128pp";
+import { xoshiro128pp } from "../engine/xoshiro128pp";
 import { RansuError } from "../internal/errors";
 import { createSource } from "../internal/source";
 import { choices, pick, pickEntry, pickIndex, pickKey, tryPick } from "./pick";
 import { reservoir, sample } from "./sample";
-import {
-  partialShuffle,
-  permutation,
-  shuffle,
-  shuffleInPlace,
-  shuffleString,
-} from "./shuffle";
-import { AliasTable, weighted } from "./weighted";
+import { permutation, shuffle, shuffleInPlace, shuffleString } from "./shuffle";
+import { AliasTable, weightedPick } from "./weighted";
 
 const src = () => createSource(xoshiro128pp("collections"));
 
@@ -193,14 +187,6 @@ describe("shuffle", () => {
     }
   });
 
-  it("partialShuffle returns k settled elements", () => {
-    const s = src();
-    const items = Array.from({ length: 1_000 }, (_, i) => i);
-    const top = partialShuffle(s, items, 3);
-    expect(top).toHaveLength(3);
-    expect(new Set(top).size).toBe(3);
-  });
-
   it("permutation contains every index once", () => {
     expect(permutation(src(), 100).sort((a, b) => a - b)).toEqual(
       Array.from({ length: 100 }, (_, i) => i)
@@ -213,12 +199,12 @@ describe("shuffle", () => {
   });
 });
 
-describe("weighted", () => {
+describe("weightedPick", () => {
   it("follows the weights", () => {
     const s = src();
     const counts = { a: 0, b: 0, c: 0 };
     for (let i = 0; i < 100_000; i++) {
-      counts[weighted(s, ["a", "b", "c"] as const, [1, 3, 6])]++;
+      counts[weightedPick(s, ["a", "b", "c"] as const, [1, 3, 6])]++;
     }
     expect(counts.a / 100_000).toBeCloseTo(0.1, 2);
     expect(counts.b / 100_000).toBeCloseTo(0.3, 2);
@@ -228,17 +214,17 @@ describe("weighted", () => {
   it("never returns a zero-weight element", () => {
     const s = src();
     for (let i = 0; i < 5_000; i++) {
-      expect(weighted(s, ["never", "always"], [0, 1])).toBe("always");
+      expect(weightedPick(s, ["never", "always"], [0, 1])).toBe("always");
     }
   });
 
   it("rejects bad weights", () => {
-    expect(() => weighted(src(), ["a"], [1, 2])).toThrow(
+    expect(() => weightedPick(src(), ["a"], [1, 2])).toThrow(
       /must equal items.length/
     );
-    expect(() => weighted(src(), ["a"], [-1])).toThrow(RansuError);
-    expect(() => weighted(src(), ["a", "b"], [0, 0])).toThrow(RansuError);
-    expect(() => weighted(src(), ["a"], [Number.NaN])).toThrow(RansuError);
+    expect(() => weightedPick(src(), ["a"], [-1])).toThrow(RansuError);
+    expect(() => weightedPick(src(), ["a", "b"], [0, 0])).toThrow(RansuError);
+    expect(() => weightedPick(src(), ["a"], [Number.NaN])).toThrow(RansuError);
   });
 });
 

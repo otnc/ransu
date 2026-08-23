@@ -63,11 +63,6 @@ export function shuffleInPlace<T>(items: T[]): T[] {
   return core.shuffleInPlace(globalSource(), items);
 }
 
-/** Settle only the first `k` elements: `O(k)` rather than `O(n)`. */
-export function partialShuffle<T>(items: Collection<T>, k: number): T[] {
-  return core.partialShuffle(globalSource(), items, k);
-}
-
 export function permutation(n: number): number[] {
   return core.permutation(globalSource(), n);
 }
@@ -77,14 +72,14 @@ export function shuffleString(value: string): string {
 }
 
 /** One element, with probability proportional to its weight. */
-export function weighted<T>(
+export function weightedPick<T>(
   items: Collection<T>,
   weights: ArrayLike<number>
 ): T {
-  return core.weighted(globalSource(), items, weights);
+  return core.weightedPick(globalSource(), items, weights);
 }
 
-/** `k` distinct elements, weighted. */
+/** `k` distinct elements, weightedPick. */
 export function weightedSample<T>(
   items: Collection<T>,
   weights: ArrayLike<number>,
@@ -93,11 +88,23 @@ export function weightedSample<T>(
   return core.weightedSample(globalSource(), items, weights, k);
 }
 
-/** A reusable weighted sampler, O(1) per draw. */
+/** A reusable weightedPick sampler, O(1) per draw. */
 export function weightedTable<T>(
   items: Collection<T>,
   weights: ArrayLike<number>
 ): { pick(): T } {
   const table = new core.AliasTable(items, weights);
   return { pick: () => table.pick(globalSource()) };
+}
+
+/** A uniformly chosen value of a plain object or `Map`. */
+export function pickValue<K extends string | number | symbol, V>(
+  target: Record<K, V> | Map<K, V>
+): V {
+  return core.pickValue(globalSource(), target);
+}
+
+/** Each element kept independently with probability `p`. */
+export function subset<T>(items: Collection<T>, p: number): T[] {
+  return core.subset(globalSource(), items, p);
 }

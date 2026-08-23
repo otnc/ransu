@@ -1,4 +1,8 @@
-import { assertLength, assertNotEmpty } from "../internal/assert";
+import {
+  assertLength,
+  assertNotEmpty,
+  assertProbability,
+} from "../internal/assert";
 import type { Source } from "../internal/source";
 import { bounded } from "../numbers/integer";
 
@@ -69,4 +73,41 @@ export function pickEntry<K extends string | number | symbol, V>(
   ) as [K, V][];
   assertNotEmpty(entries.length, "pick");
   return entries[bounded(src, entries.length)];
+}
+
+/** A uniformly chosen value of a plain object or `Map`. */
+export function pickValue<K extends string | number | symbol, V>(
+  src: Source,
+  target: Record<K, V> | Map<K, V>
+): V {
+  // Read through the keys rather than Object.values, which loses the value
+  // type when the key type is generic.
+  const values =
+    target instanceof Map
+      ? [...target.values()]
+      : (Object.keys(target) as K[]).map((key) => target[key]);
+  assertNotEmpty(values.length, "pick");
+  return values[bounded(src, values.length)];
+}
+
+/**
+ * Each element kept independently with probability `p`.
+ *
+ * Unlike `sample`, the result size is not fixed: it is binomial around
+ * `p * items.length`. That is what you want for thinning a list, dropping
+ * frames, or seeding a sparse structure.
+ */
+export function subset<T>(src: Source, items: Collection<T>, p: number): T[] {
+  assertProbability(p, "p");
+  const list = asIndexable(items);
+  const out: T[] = [];
+  if (p <= 0) return out;
+  if (p >= 1) {
+    for (let i = 0; i < list.length; i++) out.push(list[i]);
+    return out;
+  }
+  for (let i = 0; i < list.length; i++) {
+    if (src.f64() < p) out.push(list[i]);
+  }
+  return out;
 }

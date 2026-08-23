@@ -1,6 +1,6 @@
-import { nativeMath } from "../engines/native";
-import type { Engine, EngineState } from "../engines/types";
-import { xoshiro128pp } from "../engines/xoshiro128pp";
+import { nativeMath } from "../engine/native";
+import type { Engine, EngineState } from "../engine/types";
+import { xoshiro128pp } from "../engine/xoshiro128pp";
 import { raise } from "../internal/errors";
 import { createSource, type Source } from "../internal/source";
 import type { Seed } from "../seed/sequence";
