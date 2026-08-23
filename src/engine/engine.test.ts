@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { RansuError } from "../internal/errors";
+import { add64, mul64, R, rotl64, shl64, shr64 } from "../internal/u64";
 import { chacha20 } from "./chacha20";
 import { mt19937 } from "./mt19937";
 import { mulberry32 } from "./mulberry32";
@@ -148,6 +149,49 @@ describe("nativeMath", () => {
   });
 });
 
+describe("pcg32.nextUint32", () => {
+  // PCG's fixed multiplier, 6364136223846793005 — the same constant pcg32.ts
+  // hardcodes, restated here so this file doesn't depend on an unexported one.
+  const MULT_HI = 0x5851f42d;
+  const MULT_LO = 0x4c957f2d;
+
+  /**
+   * pcg_setseq_64_xsh_rr_32, built from the general-purpose u64 helpers.
+   * nextUint32() was hand-translated from this shape for speed (three helper
+   * calls through a shared scratch array measured slower); this keeps the
+   * two from silently drifting apart across a real spread of states.
+   */
+  function referenceNext(s: Uint32Array): number {
+    const oldHi = s[0];
+    const oldLo = s[1];
+
+    mul64(oldHi, oldLo, MULT_HI, MULT_LO);
+    add64(R[0], R[1], s[2], s[3]);
+    s[0] = R[0];
+    s[1] = R[1];
+
+    shr64(oldHi, oldLo, 18);
+    shr64(R[0] ^ oldHi, R[1] ^ oldLo, 27);
+    const xorshifted = R[1];
+    const rot = oldHi >>> 27;
+
+    return ((xorshifted >>> rot) | (xorshifted << (-rot & 31))) >>> 0;
+  }
+
+  it("matches the helper-based reference across many seeds and steps", () => {
+    for (const seed of [0, 1, 2, 42, 12345, 999999, 2 ** 31, 2 ** 32 - 1, -1]) {
+      const fast = pcg32(seed);
+      const reference = Uint32Array.from(pcg32(seed).getState().data);
+
+      for (let step = 0; step < 300; step++) {
+        expect(fast.nextUint32(), `seed ${seed}, step ${step}`).toBe(
+          referenceNext(reference)
+        );
+      }
+    }
+  });
+});
+
 describe("pcg32.advance", () => {
   it("matches stepping forward one draw at a time", () => {
     const stepped = pcg32(4);
@@ -164,6 +208,72 @@ describe("pcg32.advance", () => {
     const expected = take(engine, 4);
     engine.advance(-4);
     expect(take(engine, 4)).toEqual(expected);
+  });
+});
+
+describe("xoshiro256pp.step", () => {
+  /**
+   * The reference xoshiro256++ step, built directly from the general-purpose
+   * u64 helpers instead of the inlined arithmetic `step()` actually runs.
+   * `step()` was hand-translated from this shape for speed (four helper
+   * calls through a shared scratch array measured ~4x slower); this keeps
+   * the two from silently drifting apart across a real spread of states,
+   * not just the one seed the golden snapshot pins.
+   */
+  function referenceStep(s: Uint32Array): [number, number] {
+    const s0h = s[0],
+      s0l = s[1],
+      s1h = s[2],
+      s1l = s[3],
+      s2h = s[4],
+      s2l = s[5],
+      s3h = s[6],
+      s3l = s[7];
+
+    add64(s0h, s0l, s3h, s3l);
+    rotl64(R[0], R[1], 23);
+    add64(R[0], R[1], s0h, s0l);
+    const resultHi = R[0];
+    const resultLo = R[1];
+
+    shl64(s1h, s1l, 17);
+    const tH = R[0];
+    const tL = R[1];
+
+    const n2h = s2h ^ s0h;
+    const n2l = s2l ^ s0l;
+    const n3h = s3h ^ s1h;
+    const n3l = s3l ^ s1l;
+
+    s[2] = s1h ^ n2h;
+    s[3] = s1l ^ n2l;
+    s[0] = s0h ^ n3h;
+    s[1] = s0l ^ n3l;
+    s[4] = n2h ^ tH;
+    s[5] = n2l ^ tL;
+
+    rotl64(n3h, n3l, 45);
+    s[6] = R[0];
+    s[7] = R[1];
+
+    return [resultHi, resultLo];
+  }
+
+  it("matches the helper-based reference across many seeds and steps", () => {
+    for (const seed of [0, 1, 2, 42, 12345, 999999, 2 ** 31, 2 ** 32 - 1, -1]) {
+      const fast = xoshiro256pp(seed);
+      const reference = Uint32Array.from(xoshiro256pp(seed).getState().data);
+
+      for (let step = 0; step < 300; step++) {
+        const [wantHi, wantLo] = referenceStep(reference);
+        const gotLo = fast.nextUint32();
+        const gotHi = fast.nextUint32();
+        expect([gotLo, gotHi], `seed ${seed}, step ${step}`).toEqual([
+          wantLo,
+          wantHi,
+        ]);
+      }
+    }
   });
 });
 
