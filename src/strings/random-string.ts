@@ -17,16 +17,16 @@ function units(alphabet: string | ArrayLike<string>): ArrayLike<string> {
 }
 
 /**
- * A random string of `count` grapheme clusters — what a reader calls
- * "characters".
+ * Split `value` into grapheme clusters — what a reader calls "characters".
  *
  * A flag or an emoji with a skin-tone modifier is several code points that
- * display as one glyph. {@link chars} counts code points and would split
- * them; this counts what you see.
+ * display as one glyph; splitting on code points would break them apart.
+ * This exists to build an alphabet {@link string} can then draw from.
  *
  * @example
  * ```ts
- * graphemes(3); // three visible characters, whatever they cost in code points
+ * graphemes("👍🏽🎉"); // [ "👍🏽", "🎉" ], not four separate code points
+ * string(5, graphemes("👍🏽🎉")); // a 5-emoji string, skin tones intact
  * ```
  */
 export function graphemes(value: string, locale?: string): string[] {
