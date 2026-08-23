@@ -39,8 +39,7 @@ cannot drift onto different versions.
 | `pnpm lint` | Lint with ESLint, including type-aware rules |
 | `pnpm lint:fix` | Lint, writing the fixes |
 | `pnpm check` | Format then lint, writing both |
-| `pnpm ci` | The same checks without writing, plus the language check — what CI runs |
-| `pnpm check:language` | Fail if anything outside English creeps into the source or docs (`--list` prints every non-ASCII character instead) |
+| `pnpm ci` | The same checks without writing — what CI runs |
 | `pnpm sync:exports` | Regenerate the package.json `exports` map from `scripts/entries.mjs` |
 | `pnpm check:exports` | Fail if that map is stale |
 | `pnpm bench` | Measure throughput against `Math.random` (needs `pnpm build` first) |
@@ -48,11 +47,13 @@ cannot drift onto different versions.
 | `pnpm docs:build` | Build the site, including the generated API reference |
 | `pnpm docs:deploy` | Build the docs and push them to Cloudflare |
 | `pnpm smoke` | Check every import shape against the built `dist/` (needs `pnpm build` first) |
+| `pnpm check:types` | Check the published types resolve under every module mode (needs `pnpm build` first) |
 
 Before opening a pull request, make sure the full set passes:
 
 ```sh
-pnpm ci && pnpm typecheck && pnpm test:all && pnpm build && pnpm smoke
+pnpm ci && pnpm typecheck && pnpm check:exports && pnpm test:all &&
+  pnpm build && pnpm smoke && pnpm check:types
 ```
 
 ## Conventions
@@ -83,9 +84,8 @@ Singular returns one, plural returns many: `float`/`floats`, `char`/`chars`.
 
 **2. A name reads as English.** Say it out loud with the qualifier attached and
 the word order follows: "weighted pick", "pick index", "shuffle in place",
-"hash integer", "past date". Whichever order is English is the one to write.
-A bare adjective is not a name: `weighted()` gave no hint that it returned a
-single item, which is why it is now `weightedPick()`.
+"hash integer", "past date". Whichever order is English is the one to write. A
+bare adjective is not a name, because it says nothing about what comes back.
 
 **3. Follow the prevailing vocabulary before inventing one.** Where Python's
 `random`, lodash or the RFCs already have a word for this, use their word:
@@ -93,14 +93,13 @@ single item, which is why it is now `weightedPick()`.
 of those should not have to learn a second name for the same idea.
 
 **4. Short wins, but never by abbreviating.** Prefer the shorter name when both
-are understandable; `int`, `rdm` and `str` are not names. Never rename
-something to a longer name unless doing so removes a banned abbreviation
-(`hashInt` to `hashInteger`) or completes a pair (`angle`/`angleDegrees`,
+are understandable; `int`, `rdm` and `str` are not names. Only lengthen a name
+to spell out a short form or to complete a pair (`angle`/`angleDegrees`,
 `pastDate`/`futureDate`, `onSphere`/`inSphere`).
 
-Two names must never overlap. `bool()` is the fair coin and `chance(p)` is the
-weighted one; while `bool(p)` also took a probability the two were one function
-under two names, which the "one name per function" rule above already forbids.
+Two names must never overlap. `bool()` is the fair coin, `chance(p)` is the
+weighted one and `oneIn(n)` is the count form; each writes a case the others
+cannot.
 
 ## Adding a subpath
 
@@ -132,19 +131,11 @@ object, so 200,000 of them cost far more than generating the values they check.
 ## Language
 
 Everything shipped is written in English: comments, error messages, guides.
-`pnpm check:language` enforces it and runs in CI. It rejects text in another
-script, and rejects accented Latin words outside a short allowlist — which is
-how Spanish, French, German or Portuguese prose gets caught, since it nearly
-always carries an accent.
 
-Three tokens are allowed on purpose: the romanisation in the tagline, the two
-characters it romanises, and the surname of the author of the BTRS and PTRS
-algorithms. Add to that list only for a real name.
-
-Note that the built docs still contain other languages inside **dependency**
-bundles: Starlight inlines Pagefind's search-UI translation table. That is not
-our prose, and `pnpm docs:build` already prunes the ~410 KB of Pagefind UI
-bundles the site never loads.
+The built docs still contain other languages inside **dependency** bundles:
+Starlight inlines Pagefind’s search-UI translation table. That is not our
+prose, and `pnpm docs:build` already prunes the Pagefind UI bundles the site
+never loads.
 
 ## Documentation site
 

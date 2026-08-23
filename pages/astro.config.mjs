@@ -89,7 +89,6 @@ export default defineConfig({
           label: "Reference",
           items: [
             { label: "Subpaths", slug: "reference/subpaths" },
-            { label: "Naming", slug: "reference/naming" },
             { label: "Engines", slug: "reference/engines" },
             { label: "Errors", slug: "reference/errors" },
             { label: "Runtimes", slug: "reference/runtimes" },
