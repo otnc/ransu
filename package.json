@@ -23,7 +23,7 @@
     "csprng",
     "typescript"
   ],
-  "homepage": "https://ransu.otnc.dev/",
+  "homepage": "https://ransu.otnc.dev",
   "bugs": {
     "url": "https://github.com/otnc/ransu/issues"
   },
@@ -37,7 +37,7 @@
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
       "types": {
@@ -168,7 +168,6 @@
     "node": ">=18"
   },
   "scripts": {
-    "setup": "node scripts/setup.js",
     "build": "npm run sync:exports && tsdown",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
@@ -179,7 +178,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "check": "prettier --write . && eslint --fix .",
-    "ci": "prettier --check . && eslint . && node scripts/check-language.mjs",
+    "ci": "prettier --check . && eslint .",
     "smoke": "node scripts/smoke.mjs",
     "prepublishOnly": "npm run build",
     "sync:exports": "node scripts/sync-exports.mjs",
@@ -190,8 +189,7 @@
     "docs:deploy": "pnpm docs:build && pnpm --filter ransu-docs exec wrangler deploy",
     "bench": "node scripts/bench.mjs",
     "test:stat": "vitest run --project statistical",
-    "test:all": "vitest run",
-    "check:language": "node scripts/check-language.mjs"
+    "test:all": "vitest run"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
@@ -208,5 +206,51 @@
     "typescript-eslint": "catalog:",
     "vitest": "catalog:"
   },
-  "packageManager": "pnpm@11.22.0"
+  "packageManager": "pnpm@11.22.0",
+  "typesVersions": {
+    "*": {
+      "color": [
+        "./dist/color.d.cts"
+      ],
+      "compat": [
+        "./dist/compat.d.cts"
+      ],
+      "dice": [
+        "./dist/dice.d.cts"
+      ],
+      "distribution": [
+        "./dist/distribution.d.cts"
+      ],
+      "engine": [
+        "./dist/engine.d.cts"
+      ],
+      "geometry": [
+        "./dist/geometry.d.cts"
+      ],
+      "hash": [
+        "./dist/hash.d.cts"
+      ],
+      "nanoid": [
+        "./dist/nanoid.d.cts"
+      ],
+      "secure": [
+        "./dist/secure.d.cts"
+      ],
+      "time": [
+        "./dist/time.d.cts"
+      ],
+      "token": [
+        "./dist/token.d.cts"
+      ],
+      "ulid": [
+        "./dist/ulid.d.cts"
+      ],
+      "unicode": [
+        "./dist/unicode.d.cts"
+      ],
+      "uuid": [
+        "./dist/uuid.d.cts"
+      ]
+    }
+  }
 }

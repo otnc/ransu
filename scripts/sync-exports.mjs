@@ -28,11 +28,26 @@ for (const name of ordered) {
 }
 exportsMap["./package.json"] = "./package.json";
 
+// TypeScript before 4.7, and anything still on moduleResolution "node",
+// reads none of the above. Without this map those setups resolve the root
+// entry and nothing else, so every subpath import is an error for them.
+const typesVersions = {
+  "*": Object.fromEntries(
+    ordered
+      .filter((name) => name !== "index")
+      .map((name) => [name, [`./dist/${name}.d.cts`]])
+  ),
+};
+
 const next = {
   ...pkg,
   main: "./dist/index.cjs",
   module: "./dist/index.mjs",
-  types: "./dist/index.d.mts",
+  // Pairs with `main`, which is CommonJS: the .d.mts declarations say
+  // `export default` where the CommonJS file says `module.exports =`, and a
+  // legacy resolver believing them would insist on a .default that is not there.
+  types: "./dist/index.d.cts",
+  typesVersions,
   exports: exportsMap,
 };
 
