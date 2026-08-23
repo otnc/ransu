@@ -1,4 +1,4 @@
-export { char, codePoint, unicodeString } from "../global/strings";
+export { char, codePoint, chars } from "../global/strings";
 export { graphemes } from "../strings/random-string";
 export {
   type CodePointRange,

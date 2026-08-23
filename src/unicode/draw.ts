@@ -26,7 +26,7 @@ export function randomChar(
 }
 
 /** A random string of `length` code points, not UTF-16 units. */
-export function randomUnicodeString(
+export function randomChars(
   src: Source,
   length: number,
   options?: UnicodeOptions | CodePointSet

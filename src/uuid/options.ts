@@ -1,4 +1,4 @@
-import type { EngineLike } from "../engines/types";
+import type { EngineLike } from "../engine/types";
 import type { Source } from "../internal/source";
 import { secureSourceFor } from "../internal/source";
 

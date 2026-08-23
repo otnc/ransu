@@ -1,4 +1,4 @@
-import type { EngineLike } from "./engines/types";
+import type { EngineLike } from "./engine/types";
 import { assertLength } from "./internal/assert";
 import { secureSourceFor } from "./internal/source";
 import { randomString } from "./strings/random-string";

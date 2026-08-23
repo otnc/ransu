@@ -1,5 +1,5 @@
-import { FunctionEngine } from "./engines/function-engine";
-import type { Engine, EngineLike } from "./engines/types";
+import { FunctionEngine } from "./engine/function-engine";
+import type { Engine, EngineLike } from "./engine/types";
 import type { Random } from "./random";
 
 /**

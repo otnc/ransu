@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { xoshiro128pp } from "../engines/xoshiro128pp";
+import { xoshiro128pp } from "../engine/xoshiro128pp";
 import { RansuError } from "../internal/errors";
 import { createSource } from "../internal/source";
 import { graphemes, randomString } from "../strings/random-string";
 import { unicodeRanges } from "./blocks";
 import { CodePointSet } from "./code-point-set";
-import { randomChar, randomCodePoint, randomUnicodeString } from "./draw";
+import { randomChar, randomCodePoint, randomChars } from "./draw";
 
 const src = () => createSource(xoshiro128pp("unicode"));
 
@@ -166,7 +166,7 @@ describe("randomCodePoint", () => {
   });
 });
 
-describe("randomChar and randomUnicodeString", () => {
+describe("randomChar and randomChars", () => {
   it("produces well-formed single characters", () => {
     const s = src();
     for (let i = 0; i < 2_000; i++) {
@@ -178,7 +178,7 @@ describe("randomChar and randomUnicodeString", () => {
 
   it("counts length in code points, not UTF-16 units", () => {
     const s = src();
-    const value = randomUnicodeString(s, 10, { blocks: "emoji" });
+    const value = randomChars(s, 10, { blocks: "emoji" });
     expect([...value]).toHaveLength(10);
     // Astral characters take two UTF-16 units each.
     expect(value.length).toBeGreaterThan(10);
@@ -186,7 +186,7 @@ describe("randomChar and randomUnicodeString", () => {
 
   it("never emits a lone surrogate", () => {
     const s = src();
-    const value = randomUnicodeString(s, 5_000, { blocks: "all" });
+    const value = randomChars(s, 5_000, { blocks: "all" });
     expect([...value]).toHaveLength(5_000);
     for (const char of value) {
       const cp = char.codePointAt(0) as number;
@@ -196,7 +196,7 @@ describe("randomChar and randomUnicodeString", () => {
 
   it("defaults to the printable blocks", () => {
     const s = src();
-    for (const char of randomUnicodeString(s, 500)) {
+    for (const char of randomChars(s, 500)) {
       const cp = char.codePointAt(0) as number;
       expect(cp).toBeGreaterThanOrEqual(0x20);
       expect(cp).not.toBe(0x7f);
@@ -204,8 +204,8 @@ describe("randomChar and randomUnicodeString", () => {
   });
 
   it("is reproducible for a given seed", () => {
-    expect(randomUnicodeString(src(), 32, { blocks: "cjk" })).toBe(
-      randomUnicodeString(src(), 32, { blocks: "cjk" })
+    expect(randomChars(src(), 32, { blocks: "cjk" })).toBe(
+      randomChars(src(), 32, { blocks: "cjk" })
     );
   });
 });

@@ -1,4 +1,4 @@
-import type { EngineLike } from "./engines/types";
+import type { EngineLike } from "./engine/types";
 import { raise } from "./internal/errors";
 import { secureSourceFor } from "./internal/source";
 
@@ -62,7 +62,7 @@ function increment(digits: number[]): number[] {
   );
 }
 
-export function ulid(options: UlidOptions = {}): string {
+function generate(options: UlidOptions = {}): string {
   const now = options.now ?? Date.now();
 
   let digits: number[];
@@ -85,11 +85,11 @@ export function ulid(options: UlidOptions = {}): string {
 }
 
 /** The generation time of a ULID, in Unix milliseconds. */
-export function ulidTimestamp(value: string): number {
+function timestamp(value: string): number {
   if (value.length !== TIME_LENGTH + RANDOM_LENGTH) {
     raise(
       "INVALID_ARGUMENT",
-      `ulidTimestamp(): "${value}" is not a 26-character ULID.`
+      `ulid.timestamp(): "${value}" is not a 26-character ULID.`
     );
   }
   let out = 0;
@@ -98,10 +98,20 @@ export function ulidTimestamp(value: string): number {
     if (index < 0) {
       raise(
         "INVALID_ARGUMENT",
-        `ulidTimestamp(): "${value}" contains a non-base32 character.`
+        `ulid.timestamp(): "${value}" contains a non-base32 character.`
       );
     }
     out = out * 32 + index;
   }
   return out;
 }
+
+/** `ulid()` makes one; `ulid.timestamp()` reads the time back out. */
+export interface UlidApi {
+  (options?: UlidOptions): string;
+  timestamp: typeof timestamp;
+}
+
+export const ulid: UlidApi = /* @__PURE__ */ Object.assign(generate, {
+  timestamp,
+});

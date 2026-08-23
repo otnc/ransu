@@ -21,13 +21,13 @@ export function date(from: TimeInput, to: TimeInput): Date {
 }
 
 /** A `Date` within the last `days` (default 7). */
-export function recentDate(days = 7): Date {
+export function pastDate(days = 7): Date {
   const now = Date.now();
   return date(now - days * 86_400_000, now);
 }
 
 /** A `Date` within the next `days` (default 7). */
-export function soonDate(days = 7): Date {
+export function futureDate(days = 7): Date {
   const now = Date.now();
   return date(now, now + days * 86_400_000);
 }

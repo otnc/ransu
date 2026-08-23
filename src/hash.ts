@@ -1,6 +1,6 @@
 import * as collections from "./collections/index";
 import type { Collection } from "./collections/pick";
-import { xoshiro128pp } from "./engines/xoshiro128pp";
+import { xoshiro128pp } from "./engine/xoshiro128pp";
 import { assertLength, assertProbability } from "./internal/assert";
 import { createSource, type Source } from "./internal/source";
 import { integer } from "./numbers/integer";
@@ -33,7 +33,7 @@ export function hashFloat(key: Seed, salt?: Seed): number {
 }
 
 /** A stable integer in `[min, max]` for `key`. */
-export function hashInt(
+export function hashInteger(
   key: Seed,
   min: number,
   max: number,

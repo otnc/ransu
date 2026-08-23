@@ -1,5 +1,5 @@
 import { shuffleInPlace } from "./collections/shuffle";
-import type { EngineLike } from "./engines/types";
+import type { EngineLike } from "./engine/types";
 import { assertLength } from "./internal/assert";
 import { raise } from "./internal/errors";
 import { secureSourceFor } from "./internal/source";
