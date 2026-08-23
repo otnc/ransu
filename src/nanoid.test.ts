@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { xoshiro128pp } from "./engines/xoshiro128pp";
+import { xoshiro128pp } from "./engine/xoshiro128pp";
 import { NANOID_ALPHABET, nanoid } from "./nanoid";
 
 describe("nanoid", () => {

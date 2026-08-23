@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   bucket,
   hashFloat,
-  hashInt,
+  hashInteger,
   hashPick,
   hashRandom,
   rollout,
@@ -42,11 +42,11 @@ describe("hashFloat", () => {
   });
 });
 
-describe("hashInt and hashPick", () => {
+describe("hashInteger and hashPick", () => {
   it("are stable and in range", () => {
-    expect(hashInt("x", 1, 6)).toBe(hashInt("x", 1, 6));
+    expect(hashInteger("x", 1, 6)).toBe(hashInteger("x", 1, 6));
     for (let i = 0; i < 2_000; i++) {
-      const value = hashInt(`k${i}`, 1, 6);
+      const value = hashInteger(`k${i}`, 1, 6);
       expect(value).toBeGreaterThanOrEqual(1);
       expect(value).toBeLessThanOrEqual(6);
     }

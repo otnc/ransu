@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pcg32 } from "./engines/pcg32";
+import { pcg32 } from "./engine/pcg32";
 import ransu, {
   alphabets,
   engine,
@@ -43,7 +43,6 @@ describe("the default export", () => {
     const stems = [
       "random",
       "float",
-      "float32",
       "integer",
       "below",
       "range",
@@ -72,10 +71,15 @@ describe("the default export", () => {
       "weightedSample",
       "shuffle",
       "shuffleInPlace",
-      "partialShuffle",
       "permutation",
       "shuffleString",
-      "weighted",
+      "chars",
+      "char",
+      "codePoint",
+      "subset",
+      "pickValue",
+      "sampleIntegers",
+      "weightedPick",
       "weightedTable",
     ] as const;
 
@@ -177,7 +181,7 @@ describe("Random", () => {
     expect(values).toHaveLength(5);
   });
 
-  it("builds a reusable weighted table", () => {
+  it("builds a reusable weightedPick table", () => {
     const table = new Random(4).weightedTable(["a", "b"], [1, 0]);
     for (let i = 0; i < 100; i++) expect(table.pick()).toBe("a");
   });
@@ -232,7 +236,7 @@ describe("no API returns a Promise", () => {
       () => ransu.pick([1]),
       () => ransu.sample([1, 2, 3], 2),
       () => ransu.shuffle([1, 2]),
-      () => ransu.weighted(["a"], [1]),
+      () => ransu.weightedPick(["a"], [1]),
       () => ransu.string(4),
       () => ransu.hex(4),
       () => ransu.uuid(),

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { chacha20 } from "./engines/chacha20";
-import { mt19937 } from "./engines/mt19937";
-import { mulberry32 } from "./engines/mulberry32";
-import { pcg32 } from "./engines/pcg32";
-import { sfc32 } from "./engines/sfc32";
-import type { Engine } from "./engines/types";
-import { xoshiro128pp } from "./engines/xoshiro128pp";
-import { xoshiro256pp } from "./engines/xoshiro256pp";
+import { chacha20 } from "./engine/chacha20";
+import { mt19937 } from "./engine/mt19937";
+import { mulberry32 } from "./engine/mulberry32";
+import { pcg32 } from "./engine/pcg32";
+import { sfc32 } from "./engine/sfc32";
+import type { Engine } from "./engine/types";
+import { xoshiro128pp } from "./engine/xoshiro128pp";
+import { xoshiro256pp } from "./engine/xoshiro256pp";
 import { Random } from "./random";
 import { uuid } from "./uuid/index";
 
@@ -208,10 +208,12 @@ describe("derived APIs for seed 42", () => {
     `);
   });
 
-  it("weighted", () => {
+  it("weightedPick", () => {
     const r = new Random(42);
     expect(
-      Array.from({ length: 8 }, () => r.weighted(["a", "b", "c"], [1, 2, 7]))
+      Array.from({ length: 8 }, () =>
+        r.weightedPick(["a", "b", "c"], [1, 2, 7])
+      )
     ).toMatchInlineSnapshot(`
       [
         "c",

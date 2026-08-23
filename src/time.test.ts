@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { seed } from "./global/instance";
 import { RansuError } from "./internal/errors";
-import { backoff, date, duration, jitter, recentDate, soonDate } from "./time";
+import { backoff, date, duration, jitter, pastDate, futureDate } from "./time";
 
 describe("date", () => {
   it("lands inside the range", () => {
@@ -24,11 +24,11 @@ describe("date", () => {
     expect(() => date(100, 0)).toThrow(RansuError);
   });
 
-  it("recentDate is in the past, soonDate in the future", () => {
+  it("pastDate is in the past, futureDate in the future", () => {
     const now = Date.now();
-    expect(recentDate(1).getTime()).toBeLessThanOrEqual(now + 5);
-    expect(recentDate(1).getTime()).toBeGreaterThan(now - 86_400_000 - 5);
-    expect(soonDate(1).getTime()).toBeGreaterThanOrEqual(now - 5);
+    expect(pastDate(1).getTime()).toBeLessThanOrEqual(now + 5);
+    expect(pastDate(1).getTime()).toBeGreaterThan(now - 86_400_000 - 5);
+    expect(futureDate(1).getTime()).toBeGreaterThanOrEqual(now - 5);
   });
 });
 

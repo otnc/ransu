@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { RansuError } from "./internal/errors";
-import { ulid, ulidTimestamp } from "./ulid";
+import { ulid } from "./ulid";
 
 describe("ulid", () => {
   it("is 26 Crockford base32 characters", () => {
@@ -25,7 +25,7 @@ describe("ulid", () => {
 
   it("recovers its timestamp", () => {
     const now = 1_700_000_000_123;
-    expect(ulidTimestamp(ulid({ now }))).toBe(now);
-    expect(() => ulidTimestamp("too-short")).toThrow(RansuError);
+    expect(ulid.timestamp(ulid({ now }))).toBe(now);
+    expect(() => ulid.timestamp("too-short")).toThrow(RansuError);
   });
 });

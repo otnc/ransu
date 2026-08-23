@@ -5,8 +5,8 @@ import {
   fromSeedrandom,
   toMathRandom,
 } from "./compat";
-import { pcg32 } from "./engines/pcg32";
-import { xoshiro128pp } from "./engines/xoshiro128pp";
+import { pcg32 } from "./engine/pcg32";
+import { xoshiro128pp } from "./engine/xoshiro128pp";
 import { Random } from "./random";
 
 describe("toMathRandom", () => {
