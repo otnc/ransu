@@ -39,9 +39,9 @@ emoji sequences, combining marks and flags survive.
 
 ```ts
 ransu.char({ blocks: "emoji" }); // '🚀'
-ransu.unicodeString(10, { blocks: "kana" });
+ransu.chars(10, { blocks: "kana" });
 ransu.codePoint({ blocks: ["greek", "cyrillic"] });
-ransu.unicodeString(20, { ranges: [[0x4e00, 0x9fff]] });
+ransu.chars(20, { ranges: [[0x4e00, 0x9fff]] });
 ```
 
 | Option                                                    | Effect                                       |

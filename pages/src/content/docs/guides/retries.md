@@ -53,8 +53,8 @@ jitter(60_000, 0.1); // a one-minute poll, spread across [54s, 66s)
 
 ```ts
 date(new Date("2020-01-01"), new Date("2021-01-01"));
-recentDate(30); // some point in the last 30 days
-soonDate(7); // some point in the next 7 days
+pastDate(30); // some point in the last 30 days
+futureDate(7); // some point in the next 7 days
 duration(100, 500); // milliseconds
 ```
 

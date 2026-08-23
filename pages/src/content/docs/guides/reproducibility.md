@@ -64,7 +64,7 @@ xoshiro128++. Applications may do this; libraries should not rely on it.
 
 Within one major version, the same engine and seed produce the same output. That
 covers engine bits, the core conversions, the order in which `shuffle`, `sample`
-and `weighted` consume values, and every distribution algorithm.
+and `weightedPick` consume values, and every distribution algorithm.
 
 A faster algorithm gets a **new name** rather than replacing an existing one.
 CI holds golden snapshots of every engine's first outputs, so an accidental

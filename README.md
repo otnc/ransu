@@ -78,8 +78,8 @@ ransu.integer(1, 6); // [min, max] — inclusive
 ransu.below(arr.length); // [0, n)     — what indices want
 ransu.range(0, 100, 5); // Python's randrange
 ransu.bigint(0n, 2n ** 128n);
-ransu.bool(0.25); // true a quarter of the time
-ransu.chance(0.1); // reads better inside an `if`
+ransu.bool(); // true or false, evenly
+ransu.chance(0.25); // true a quarter of the time
 ransu.bits(12); // Python's getrandbits
 ransu.bytes(32); // Uint8Array
 ransu.floats(1000); // Float64Array, bounds validated once
@@ -101,10 +101,12 @@ ransu.combination(items, 5); // 5 distinct, original order
 ransu.reservoir(stream, 5); // 5 from an iterable of unknown length
 ransu.shuffle(items); // a new array
 ransu.shuffleInPlace(items); // the only mutating one
-ransu.partialShuffle(items, 3); // top 3 of a million, in O(k)
 ransu.takeOut(items); // remove one and return it
-ransu.weighted(items, [1, 3, 6]); // proportional to weights
+ransu.weightedPick(items, [1, 3, 6]); // proportional to weights
 ransu.weightedSample(items, w, 3); // 3 distinct, weighted
+ransu.subset(items, 0.25); // each element kept with probability p
+ransu.pickValue(obj);
+ransu.sampleIntegers(10, 0, 1e9); // distinct, without building the range
 
 const loot = ransu.weightedTable(items, [1, 3, 6]);
 loot.pick(); // O(1) per draw, via the alias method
@@ -133,9 +135,9 @@ sensible exclusions:
 
 ```ts
 ransu.char({ blocks: "emoji" }); // '🚀'
-ransu.unicodeString(10, { blocks: "kana" });
+ransu.chars(10, { blocks: "kana" });
 ransu.codePoint({ blocks: ["greek", "cyrillic"] });
-ransu.unicodeString(20, { ranges: [[0x4e00, 0x9fff]] });
+ransu.chars(20, { ranges: [[0x4e00, 0x9fff]] });
 ```
 
 Surrogates can never come out, and controls, private-use areas and
@@ -155,6 +157,24 @@ noncharacters are excluded unless you opt back in. Blocks available:
 | `filter`                                                  | Arbitrary per-code-point rejection           |
 
 Reusing the same options? Build a `CodePointSet` once and pass it instead.
+
+### Dice, shapes and colours
+
+```ts
+ransu.dice("3d6+2"); // 13
+ransu.dice.detail("4d6"); // { total, dice, modifier }
+ransu.d20();
+ransu.coin(); // 'heads' | 'tails'
+
+ransu.inCircle(5); // [x, y], uniform by area
+ransu.onSphere(1); // [x, y, z]
+ransu.inRect({ width: 800, height: 600 });
+
+ransu.color(); // '#3f7ac2'
+ransu.rgb(); // [63, 122, 194, 1]
+ransu.color({ alpha: true }); // '#3f7ac2b3'
+ransu.color({ format: "rgb" }); // 'rgb(63 122 194)'
+```
 
 ### Identifiers
 
@@ -190,10 +210,10 @@ ransu.zipf(1.2, 1000);
 Drawing repeatedly? Build the sampler once — it validates its parameters and
 precomputes its constants up front. Same name, two shapes: **positional
 arguments give you a number, an options object gives you a sampler**, and the
-sampler lives in `ransu/distributions`.
+sampler lives in `ransu/distribution`.
 
 ```ts
-import { normal, categorical } from "ransu/distributions";
+import { normal, categorical } from "ransu/distribution";
 
 const height = normal({ mean: 170, sd: 6 });
 height.sample(); // one draw
@@ -298,8 +318,8 @@ One subpath per thing, so an import says what it brings in.
 | Import                | Contents                                                                                  |
 | --------------------- | ----------------------------------------------------------------------------------------- |
 | `ransu`               | Everything ergonomic: numbers, collections, strings, identifiers, distributions, `Random` |
-| `ransu/engines`       | Every engine, as classes and seedable factories                                           |
-| `ransu/distributions` | Sampler factories for all 31 distributions                                                |
+| `ransu/engine`       | Every engine, as classes and seedable factories                                           |
+| `ransu/distribution` | Sampler factories for all 31 distributions                                                |
 | `ransu/uuid`          | Every UUID version, plus parse / stringify / validate / compare                           |
 | `ransu/nanoid`        | nanoid only                                                                               |
 | `ransu/ulid`          | ULID only                                                                                 |
@@ -367,7 +387,7 @@ by generation.
 
 ## Documentation
 
-Guides and full reference: **[ransu.dev](https://ransu.dev)**, built from
+Guides and full reference: **[ransu.otnc.dev](https://ransu.otnc.dev)**, built from
 `pages/` with Astro Starlight.
 
 ## Contributing

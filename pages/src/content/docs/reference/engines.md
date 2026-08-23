@@ -4,7 +4,7 @@ description: The nine generators, and when each is the right one.
 ---
 
 ```ts
-import { xoshiro128pp, pcg32, mt19937 } from "ransu/engines";
+import { xoshiro128pp, pcg32, mt19937 } from "ransu/engine";
 
 new Random(42); // xoshiro128++
 new Random(42, { engine: pcg32 });

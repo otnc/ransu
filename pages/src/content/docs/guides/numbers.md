@@ -10,8 +10,8 @@ ransu.integer(1, 6); // [min, max] — inclusive
 ransu.below(arr.length); // [0, n)     — what indices want
 ransu.range(0, 100, 5); // Python's randrange
 ransu.bigint(0n, 2n ** 128n);
-ransu.bool(0.25); // true a quarter of the time
-ransu.chance(0.1); // reads better inside an `if`
+ransu.bool(); // true or false, evenly
+ransu.chance(0.25); // true a quarter of the time
 ransu.oneIn(20);
 ransu.sign(); // -1 or 1
 ransu.bits(12); // Python's getrandbits

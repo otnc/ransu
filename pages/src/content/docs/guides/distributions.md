@@ -16,10 +16,10 @@ ransu.zipf(1.2, 1000);
 ## Reusable samplers
 
 Same name, two shapes: **positional arguments give a number, an options object
-gives a sampler.** The samplers live in `ransu/distributions`.
+gives a sampler.** The samplers live in `ransu/distribution`.
 
 ```ts
-import { normal, categorical } from "ransu/distributions";
+import { normal, categorical } from "ransu/distribution";
 
 const height = normal({ mean: 170, sd: 6 });
 height.sample(); // one draw

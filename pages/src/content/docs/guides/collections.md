@@ -20,11 +20,10 @@ ransu.reservoir(stream, 5); // 5 from an iterable of unknown length
 
 ransu.shuffle(items); // a new array
 ransu.shuffleInPlace(items); // the only mutating one
-ransu.partialShuffle(items, 3); // top 3 of a million, in O(k)
 ransu.permutation(52);
 ransu.takeOut(items); // remove one and return it
 
-ransu.weighted(items, [1, 3, 6]);
+ransu.weightedPick(items, [1, 3, 6]);
 ransu.weightedSample(items, w, 3); // distinct, weighted
 ```
 
@@ -41,7 +40,6 @@ than `T | undefined`. When empty is expected, use `tryPick`.
 | Distinct, order does not matter     | `combination`    | `O(k)` or `O(n)` |
 | Distinct, shuffled result           | `sample`         | `O(k)` or `O(n)` |
 | From a stream of unknown length     | `reservoir`      | one pass         |
-| Just the top few of a huge array    | `partialShuffle` | `O(k)`           |
 
 `sample` picks its algorithm from the shape: Floyd's when `k` is small relative
 to `n` (no copy of the input), a partial Fisher–Yates otherwise. Both give every
@@ -49,7 +47,7 @@ subset equal probability.
 
 ## Repeated weighted draws
 
-`weighted` is a single linear pass with no allocation — right for a one-off.
+`weightedPick` is a single linear pass with no allocation — right for a one-off.
 When the same weights are sampled over and over, build the table once:
 
 ```ts

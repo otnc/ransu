@@ -70,7 +70,7 @@ Pass an engine and the identifier becomes reproducible. Each engine keeps its
 own clock and node state, so a fresh seeded engine always replays the same way:
 
 ```ts
-import { xoshiro128pp } from "ransu/engines";
+import { xoshiro128pp } from "ransu/engine";
 
 uuid.v4({ engine: xoshiro128pp(1) });
 uuid.v7({ engine: xoshiro128pp(1), now: 1_700_000_000_000 });
