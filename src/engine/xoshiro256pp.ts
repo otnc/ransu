@@ -1,3 +1,4 @@
+import { assertLength } from "../internal/assert";
 import type { Seed, SeedSequence } from "../seed/sequence";
 import { ensureNonZero, initialWords, PrngEngine } from "./prng-engine";
 import type { Engine } from "./types";
@@ -132,6 +133,7 @@ export class Xoshiro256pp extends PrngEngine {
   }
 
   override split(n: number): Engine[] {
+    assertLength(n, "n");
     const out: Engine[] = [];
     const cursor = this.clone();
     for (let i = 0; i < n; i++) {

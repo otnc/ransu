@@ -1,3 +1,4 @@
+import { raise } from "../internal/errors";
 import type { Source } from "../internal/source";
 import { bounded } from "../numbers/integer";
 
@@ -7,6 +8,31 @@ import { bounded } from "../numbers/integer";
 
 /** Milliseconds between 1582-10-15 and the Unix epoch. */
 const GREGORIAN_OFFSET = 12219292800000;
+
+/**
+ * The largest Unix millisecond timestamp the 60-bit v1/v6 field can hold,
+ * counting 100-nanosecond intervals from 1582-10-15.
+ */
+const MAX_V1_MILLIS = Math.floor((2 ** 60 - 1) / 10000) - GREGORIAN_OFFSET;
+
+/** The largest Unix millisecond timestamp the 48-bit v7 field can hold. */
+const MAX_V7_MILLIS = 2 ** 48 - 1;
+
+/**
+ * A caller-supplied `now` outside the field's range does not throw on its
+ * own — it is just a number — so without this it silently wraps into a
+ * plausible-looking UUID carrying the wrong instant. The likely way to hit
+ * this by accident is passing epoch nanoseconds or microseconds where
+ * milliseconds were expected.
+ */
+function assertMillis(value: number, max: number): void {
+  if (!Number.isSafeInteger(value) || value < 0 || value > max) {
+    raise(
+      "INVALID_ARGUMENT",
+      `now must be a Unix millisecond timestamp within [0, ${max}], got ${String(value)}.`
+    );
+  }
+}
 
 interface V1State {
   msecs: number;
@@ -41,6 +67,7 @@ export function v1Bytes(
   now: number | undefined,
   out: Uint8Array
 ): Uint8Array {
+  if (now !== undefined) assertMillis(now, MAX_V1_MILLIS);
   let state = v1States.get(source.engine);
   if (!state) {
     state = initV1(source);
@@ -114,6 +141,7 @@ export function v7Bytes(
   now: number | undefined,
   out: Uint8Array
 ): Uint8Array {
+  if (now !== undefined) assertMillis(now, MAX_V7_MILLIS);
   const wall = now ?? Date.now();
   let state = v7States.get(source.engine);
   if (!state) {

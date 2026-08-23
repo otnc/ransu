@@ -122,7 +122,7 @@ export interface BackoffOptions {
  * backoff(1); // 213.9   around 200ms
  * backoff(4); // 1483.2  around 1.6s, capped by maxDelay
  *
- * backoff(3, { base: 250, factor: 3, jitter: "equal" });
+ * backoff(3, { base: 250, factor: 3, strategy: "equal" });
  * ```
  */
 export function backoff(attempt: number, options: BackoffOptions = {}): number {
