@@ -47,6 +47,31 @@ export interface UuidApi {
   DCE_DOMAIN: typeof DCE_DOMAIN;
 }
 
+/**
+ * A UUID, in every version RFC 9562 defines.
+ *
+ * Calling it gives a v4; every version and helper hangs off it. Names and
+ * argument order match the `uuid` package, so it is a drop-in for that.
+ *
+ * @example
+ * ```ts
+ * uuid();    // "39817b65-27b9-45d0-9b51-315d530a3211"  a v4
+ * uuid.v4(); // the same thing, spelled out
+ *
+ * // Time-ordered, so it sorts by creation time in a database index.
+ * uuid.v7(); // "0198f2a4-1c05-7e2b-8f31-9d4a7c0e15b3"
+ *
+ * // Name-based: the same name always gives the same UUID.
+ * uuid.v5("example.com", uuid.NAMESPACE.DNS);
+ *
+ * uuid.validate(uuid());     // true
+ * uuid.version(uuid.v7());   // 7
+ * uuid.timestamp(uuid.v7()); // 1756890764019
+ *
+ * uuid.NIL; // "00000000-0000-0000-0000-000000000000"
+ * uuid.MAX; // "ffffffff-ffff-ffff-ffff-ffffffffffff"
+ * ```
+ */
 export const uuid: UuidApi = /* @__PURE__ */ Object.assign(
   (options?: UuidOptions): string => v4(options),
   {

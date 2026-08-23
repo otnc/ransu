@@ -190,7 +190,8 @@
     "docs:deploy": "pnpm docs:build && pnpm --filter ransu-docs exec wrangler deploy",
     "bench": "node scripts/bench.mjs",
     "test:stat": "vitest run --project statistical",
-    "test:all": "vitest run"
+    "test:all": "vitest run",
+    "check:examples": "node scripts/check-examples.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",

@@ -3,7 +3,19 @@ import { v1Timestamp, v7Timestamp } from "./clock";
 import { parse, version } from "./codec";
 import { v6ToV1Bytes } from "./v6";
 
-/** The generation time of a version 1, 6 or 7 UUID, in Unix milliseconds. */
+/**
+ * The creation time of a time-based UUID, in Unix milliseconds.
+ *
+ * Versions 1, 6 and 7 carry a timestamp; the others do not, and throw.
+ *
+ * @example
+ * ```ts
+ * timestamp(v7()); // 1756890764019
+ * timestamp(v1()); // the same instant, read from a different layout
+ *
+ * new Date(timestamp(v7())); // 2026-08-23T09:12:44.019Z
+ * ```
+ */
 export function timestamp(value: string): number {
   const v = version(value);
   const bytes = parse(value);

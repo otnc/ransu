@@ -4,9 +4,20 @@ import { brand, stringify } from "./codec";
 import { resolveSource, type TimeUuidOptions } from "./options";
 
 /**
- * Version 2 — DCE Security. Defined by DCE 1.1, not RFC 9562. Included for
- * completeness but not recommended: it trades 32 bits of timestamp for a local
- * ID, leaving far fewer distinct values per node than v1.
+ * Version 2 — DCE Security, defined by DCE 1.1 rather than RFC 9562.
+ *
+ * RFC 9562 §4.1 lists version 2 as reserved and does not specify it. It
+ * replaces the low 32 bits of the v1 timestamp with a local ID and the low
+ * byte of the clock sequence with a domain, which leaves roughly one distinct
+ * value per 7 minutes per node. Included for completeness; do not choose it
+ * for new work.
+ *
+ * @example
+ * ```ts
+ * v2(DCE_DOMAIN.PERSON, 1000); // "000003e8-9414-21ec-8400-9f6bdeced846"
+ * v2(DCE_DOMAIN.GROUP, 20);
+ * v2(DCE_DOMAIN.ORG, 42);
+ * ```
  */
 export function v2(
   localDomain: number,
@@ -39,5 +50,14 @@ export function v2(
   return stringify(brand(bytes, 2));
 }
 
-/** Domain constants for {@link v2}. */
+/**
+ * The local domains {@link v2} accepts, from DCE 1.1.
+ *
+ * @example
+ * ```ts
+ * v2(DCE_DOMAIN.PERSON, 1000); // a POSIX UID
+ * v2(DCE_DOMAIN.GROUP, 20);    // a POSIX GID
+ * v2(DCE_DOMAIN.ORG, 42);
+ * ```
+ */
 export const DCE_DOMAIN = { PERSON: 0, GROUP: 1, ORG: 2 } as const;
