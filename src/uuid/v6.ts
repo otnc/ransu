@@ -38,7 +38,7 @@ export function v1ToV6Bytes(v: Uint8Array): Uint8Array {
   out[5] = ((v[1] & 0x0f) << 4) | ((v[2] & 0xf0) >>> 4);
   out[6] = 0x60 | (v[2] & 0x0f);
   out[7] = v[3];
-  out.set(v.subarray(8), 8);
+  for (let i = 8; i < 16; i++) out[i] = v[i];
   return out;
 }
 
@@ -52,7 +52,7 @@ export function v6ToV1Bytes(v: Uint8Array): Uint8Array {
   out[5] = ((v[2] & 0x0f) << 4) | ((v[3] & 0xf0) >>> 4);
   out[6] = 0x10 | ((v[0] & 0xf0) >>> 4);
   out[7] = ((v[0] & 0x0f) << 4) | ((v[1] & 0xf0) >>> 4);
-  out.set(v.subarray(8), 8);
+  for (let i = 8; i < 16; i++) out[i] = v[i];
   return out;
 }
 
