@@ -20,10 +20,14 @@ const src = () => sourceFor(cryptoRandom);
  *
  * @example
  * ```ts
+ * import { RansuError } from "ransu";
+ *
  * try {
- *   seed(42);
+ *   seed();
  * } catch (error) {
- *   error.code; // "UNSEEDABLE_ENGINE"
+ *   if (error instanceof RansuError) {
+ *     error.code; // "UNSEEDABLE_ENGINE"
+ *   }
  * }
  *
  * // Import from "ransu" when you want reproducible values.
