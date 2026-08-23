@@ -5,7 +5,7 @@
 // whichever engine happened to be measured second, which is exactly the trap a
 // naive harness falls into. A fresh function per case means a fresh inline
 // cache, so each number reflects the engine and not the harness.
-import { normal } from "../dist/distributions.mjs";
+import { normal } from "../dist/distribution.mjs";
 import {
   chacha20,
   mt19937,
@@ -15,7 +15,7 @@ import {
   sfc32,
   xoshiro128pp,
   xoshiro256pp,
-} from "../dist/engines.mjs";
+} from "../dist/engine.mjs";
 import { Random } from "../dist/index.mjs";
 
 const ROUNDS = 7;
@@ -172,11 +172,13 @@ bench("collections", "sample(52, 5)", ["r", "d"], "r.sample(d, 5).length", [
   seeded,
   deck,
 ]);
-bench("collections", "weighted(52)", ["r", "d", "w"], "r.weighted(d, w)", [
-  seeded,
-  deck,
-  flat,
-]);
+bench(
+  "collections",
+  "weightedPick(52)",
+  ["r", "d", "w"],
+  "r.weightedPick(d, w)",
+  [seeded, deck, flat]
+);
 bench("collections", "weightedTable.pick()", ["t"], "t.pick()", [table]);
 
 const gaussian = normal({ mean: 0, sd: 1 });

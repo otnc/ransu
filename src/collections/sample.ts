@@ -83,18 +83,48 @@ function skip(src: Source, w: number): number {
   return Math.floor(Math.log(positive(src)) / Math.log(1 - w)) + 1;
 }
 
+/**
+ * Above this, membership checks pay off as a `Set`; below it, a linear scan
+ * over a plain array wins by skipping the hashing and the allocation.
+ * Measured crossover is around 96; 64 stays safely on the array side of it.
+ */
+const FLOYD_SET_THRESHOLD = 64;
+
 /** Floyd's algorithm: `k` distinct indices without materialising `n` of them. */
 function floyd(src: Source, n: number, k: number): number[] {
-  const chosen = new Set<number>();
-  const out: number[] = [];
-  for (let j = n - k; j < n; j++) {
+  const out = new Array<number>(k);
+  if (k > FLOYD_SET_THRESHOLD) {
+    const chosen = new Set<number>();
+    for (let i = 0, j = n - k; j < n; i++, j++) {
+      const t = bounded(src, j + 1);
+      if (chosen.has(t)) {
+        chosen.add(j);
+        out[i] = j;
+      } else {
+        chosen.add(t);
+        out[i] = t;
+      }
+    }
+    return out;
+  }
+
+  const chosen = new Array<number>(k);
+  let chosenLength = 0;
+  for (let i = 0, j = n - k; j < n; i++, j++) {
     const t = bounded(src, j + 1);
-    if (chosen.has(t)) {
-      chosen.add(j);
-      out.push(j);
+    let seen = false;
+    for (let c = 0; c < chosenLength; c++) {
+      if (chosen[c] === t) {
+        seen = true;
+        break;
+      }
+    }
+    if (seen) {
+      chosen[chosenLength++] = j;
+      out[i] = j;
     } else {
-      chosen.add(t);
-      out.push(t);
+      chosen[chosenLength++] = t;
+      out[i] = t;
     }
   }
   return out;

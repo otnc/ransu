@@ -1,4 +1,3 @@
-import { add64, mul64, R, shr64 } from "../internal/u64";
 import type { Seed, SeedSequence } from "../seed/sequence";
 import { initialWords, PrngEngine } from "./prng-engine";
 
@@ -9,6 +8,8 @@ import { initialWords, PrngEngine } from "./prng-engine";
 // 6364136223846793005
 const MULT_HI = 0x5851f42d;
 const MULT_LO = 0x4c957f2d;
+const MULT_LO_HI16 = MULT_LO >>> 16;
+const MULT_LO_LO16 = MULT_LO & 0xffff;
 const MULT = 0x5851f42d4c957f2dn;
 const MASK64 = (1n << 64n) - 1n;
 
@@ -23,19 +24,41 @@ const MASK64 = (1n << 64n) - 1n;
 export class Pcg32 extends PrngEngine {
   readonly algorithm = "pcg32";
 
+  // Inlined for the same reason as xoshiro256pp.step(): mul64/add64/shr64 each
+  // round-trip their result through a shared scratch array, and this is the
+  // hottest call in the engine. engine.test.ts checks it against the original
+  // helper calls across many random states.
   nextUint32(): number {
     const s = this.s;
     const oldHi = s[0];
     const oldLo = s[1];
+    const incHi = s[2];
+    const incLo = s[3];
 
-    mul64(oldHi, oldLo, MULT_HI, MULT_LO);
-    add64(R[0], R[1], s[2], s[3]);
-    s[0] = R[0];
-    s[1] = R[1];
+    // mulHi/mulLo = low 64 bits of (oldHi:oldLo) * MULT
+    const al = oldLo & 0xffff;
+    const ah = oldLo >>> 16;
+    const low = al * MULT_LO_LO16;
+    const mid = ah * MULT_LO_LO16 + al * MULT_LO_HI16 + (low >>> 16);
+    const mulLo = (((mid & 0xffff) << 16) | (low & 0xffff)) >>> 0;
+    const mulHi =
+      (ah * MULT_LO_HI16 +
+        Math.floor(mid / 0x10000) +
+        Math.imul(oldHi, MULT_LO) +
+        Math.imul(oldLo, MULT_HI)) >>>
+      0;
 
-    shr64(oldHi, oldLo, 18);
-    shr64(R[0] ^ oldHi, R[1] ^ oldLo, 27);
-    const xorshifted = R[1];
+    // new state = mul + inc (64-bit add)
+    const sumLo = mulLo + incLo;
+    s[1] = sumLo >>> 0;
+    s[0] = (mulHi + incHi + (sumLo > 0xffffffff ? 1 : 0)) >>> 0;
+
+    // xorshifted = (uint32_t)(((oldstate >> 18) ^ oldstate) >> 27)
+    const shHi = oldHi >>> 18;
+    const shLo = ((oldLo >>> 18) | (oldHi << 14)) >>> 0;
+    const xh = shHi ^ oldHi;
+    const xl = shLo ^ oldLo;
+    const xorshifted = ((xl >>> 27) | (xh << 5)) >>> 0;
     const rot = oldHi >>> 27;
 
     return ((xorshifted >>> rot) | (xorshifted << (-rot & 31))) >>> 0;

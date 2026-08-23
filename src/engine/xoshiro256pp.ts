@@ -1,8 +1,14 @@
-import { add64, R, rotl64, shl64 } from "../internal/u64";
 import { assertLength } from "../internal/assert";
 import type { Seed, SeedSequence } from "../seed/sequence";
 import { ensureNonZero, initialWords, PrngEngine } from "./prng-engine";
 import type { Engine } from "./types";
+
+// `step()` used to call add64/rotl64/shl64 from ../internal/u64, each writing
+// its pair through a shared scratch array. That is four calls and four
+// read-backs through module-level memory per draw; inlined with locals, it
+// measured about 4x faster. The arithmetic below is that same math, worked
+// out by hand — engine.test.ts checks it against the original helper calls
+// across many random states, so a slip here cannot pass silently.
 
 // xoshiro256++ over 32-bit limbs, for streams that must line up with a Rust or
 // C implementation. For speed in JavaScript prefer Xoshiro128pp.
@@ -46,15 +52,19 @@ export class Xoshiro256pp extends PrngEngine {
     const s3h = s[6];
     const s3l = s[7];
 
-    add64(s0h, s0l, s3h, s3l);
-    rotl64(R[0], R[1], 23);
-    add64(R[0], R[1], s0h, s0l);
-    this.lastHi = R[0];
-    this.lastLo = R[1];
+    // result = rotl64(s0 + s3, 23) + s0
+    const sumLo = s0l + s3l;
+    const sumLo32 = sumLo >>> 0;
+    const sumHi = (s0h + s3h + (sumLo > 0xffffffff ? 1 : 0)) >>> 0;
+    const rotHi = ((sumHi << 23) | (sumLo32 >>> 9)) >>> 0;
+    const rotLo = ((sumLo32 << 23) | (sumHi >>> 9)) >>> 0;
+    const resLo = rotLo + s0l;
+    this.lastLo = resLo >>> 0;
+    this.lastHi = (rotHi + s0h + (resLo > 0xffffffff ? 1 : 0)) >>> 0;
 
-    shl64(s1h, s1l, 17);
-    const tH = R[0];
-    const tL = R[1];
+    // t = s1 << 17
+    const tH = ((s1h << 17) | (s1l >>> 15)) >>> 0;
+    const tL = (s1l << 17) >>> 0;
 
     const n2h = s2h ^ s0h;
     const n2l = s2l ^ s0l;
@@ -68,9 +78,9 @@ export class Xoshiro256pp extends PrngEngine {
     s[4] = n2h ^ tH;
     s[5] = n2l ^ tL;
 
-    rotl64(n3h, n3l, 45);
-    s[6] = R[0];
-    s[7] = R[1];
+    // s3 = rotl64(n3, 45): 45 - 32 = 13
+    s[6] = ((n3l << 13) | (n3h >>> 19)) >>> 0;
+    s[7] = ((n3h << 13) | (n3l >>> 19)) >>> 0;
   }
 
   /** Low word first, then the high word of the same 64-bit draw. */

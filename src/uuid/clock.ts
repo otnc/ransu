@@ -172,6 +172,12 @@ export function v7Bytes(
     }
   }
 
+  // Fill the whole buffer before overwriting the deterministic bytes below,
+  // rather than `fillBytes(out.subarray(8))`: a subarray is a fresh view
+  // object on every call, and the few extra random bytes this then discards
+  // are far cheaper than that allocation.
+  source.fillBytes(out);
+
   const msecs = state.emitted;
   out[0] = Math.floor(msecs / 0x10000000000) & 0xff;
   out[1] = Math.floor(msecs / 0x100000000) & 0xff;
@@ -182,8 +188,6 @@ export function v7Bytes(
 
   out[6] = 0x70 | ((state.counter >>> 8) & 0x0f);
   out[7] = state.counter & 0xff;
-
-  source.fillBytes(out.subarray(8));
   out[8] = (out[8] & 0x3f) | 0x80;
 
   return out;
